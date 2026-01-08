@@ -10,9 +10,9 @@ export default function ContactCTA() {
                 <h2 className="text-5xl md:text-8xl font-serif font-bold text-white mb-8">
                     Ready to build?
                 </h2>
-                <Link href="/contact" className="inline-flex items-center gap-3 bg-neon-blue text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors">
+                <a href="https://calendly.com/gritlabsinit" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-neon-blue text-black px-8 py-4 font-bold uppercase tracking-widest hover:bg-white transition-colors">
                     Start a Project <ArrowRight size={18} />
-                </Link>
+                </a>
             </div>
 
             {/* Decorative Grid Background */}

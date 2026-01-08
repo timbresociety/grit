@@ -1,18 +1,24 @@
 "use client"
 
 import { useRef } from 'react'
+import Image from 'next/image'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
-const logos = [
-    { name: "Amazon", label: "AMAZON" },
-    { name: "CRED", label: "CRED" },
-    { name: "Jio", label: "JIO" },
-    { name: "Coinshift", label: "COINSHIFT" },
-    { name: "Polygon", label: "POLYGON" },
+interface Logo {
+    name: string;
+    src: string;
+    className?: string;
+}
+
+const logos: Logo[] = [
+    { name: "Amazon", src: "/partners/amazon_v3.png", className: "opacity-50 group-hover:opacity-100 mix-blend-screen grayscale contrast-150" },
+    { name: "CRED", src: "/partners/cred.png" },
+    { name: "Jio", src: "/partners/jio.png" },
+    { name: "Coinshift", src: "/partners/coinshift.png" },
 ]
 
-function LogoCard({ label }: { label: string }) {
+function LogoCard({ src, name, className }: { src: string, name: string, className?: string }) {
     const ref = useRef<HTMLDivElement>(null)
 
     // Mouse position state
@@ -51,6 +57,10 @@ function LogoCard({ label }: { label: string }) {
         y.set(0)
     }
 
+    // Default: handle white backgrounds (grayscale invert mix-blend-screen)
+    // Amazon override: handle black background (mix-blend-screen grayscale contrast-200)
+    const imageClasses = className || "opacity-50 group-hover:opacity-100 grayscale invert mix-blend-screen"
+
     return (
         <motion.div
             ref={ref}
@@ -61,7 +71,7 @@ function LogoCard({ label }: { label: string }) {
                 rotateY,
                 transformStyle: "preserve-3d"
             }}
-            className="relative group w-[160px] h-[100px] md:w-[200px] md:h-[120px] flex items-center justify-center bg-white/5 border border-white/10 rounded-xl cursor-default perspective-1000"
+            className="relative group w-[160px] h-[100px] md:w-[200px] md:h-[120px] flex items-center justify-center bg-white/5 border border-white/10 rounded-xl cursor-default perspective-1000 p-6"
         >
             {/* Spotlight Overlay */}
             <motion.div
@@ -71,17 +81,22 @@ function LogoCard({ label }: { label: string }) {
                 }}
             />
 
-            {/* Logo Check/Text */}
-            <span className="text-xl md:text-2xl font-bold tracking-widest text-white/40 group-hover:text-white transition-colors duration-300 font-serif">
-                {label}
-            </span>
+            {/* Logo Image */}
+            <div className="relative w-full h-full flex items-center justify-center">
+                <Image
+                    src={src}
+                    alt={name}
+                    fill
+                    className={cn("object-contain transition-all duration-300", imageClasses)}
+                />
+            </div>
         </motion.div>
     )
 }
 
 export default function Logos() {
     return (
-        <section className="py-24 bg-[#050505] overflow-hidden">
+        <section className="py-12 md:py-24 bg-[#050505] overflow-hidden">
             <div className="container mx-auto px-6 mb-12 text-center md:text-left">
                 <span className="text-neon-blue uppercase tracking-[0.2em] text-xs font-semibold">
                     Trusted Partners
@@ -91,24 +106,14 @@ export default function Logos() {
                 </h2>
             </div>
 
-            {/* Mobile: Grid Layout */}
-            <div className="md:hidden grid grid-cols-2 gap-4 px-6">
-                {logos.map((logo) => (
-                    <div key={logo.name} className="flex justify-center">
-                        <LogoCard label={logo.label} />
-                    </div>
-                ))}
-                {/* Add one more if odd number or just center last? Let's assume 5 items -> 3 rows */}
-            </div>
-
-            {/* Desktop: Infinite Marquee */}
-            <div className="hidden md:flex relative w-full overflow-hidden mask-gradient-x">
+            {/* Infinite Marquee (Mobile & Desktop) */}
+            <div className="flex relative w-full overflow-hidden mask-gradient-x">
                 {/* Gradient Masks */}
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-10"></div>
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-10"></div>
+                <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#050505] to-transparent z-10"></div>
+                <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#050505] to-transparent z-10"></div>
 
                 <motion.div
-                    className="flex gap-8 px-4"
+                    className="flex gap-4 md:gap-8 px-4"
                     animate={{ x: ["0%", "-50%"] }}
                     transition={{
                         repeat: Infinity,
@@ -119,7 +124,7 @@ export default function Logos() {
                 >
                     {/* Double the list for seamless loop */}
                     {[...logos, ...logos, ...logos, ...logos].map((logo, i) => (
-                        <LogoCard key={`${logo.name}-${i}`} label={logo.label} />
+                        <LogoCard key={`${logo.name}-${i}`} src={logo.src} name={logo.name} className={logo.className} />
                     ))}
                 </motion.div>
             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import { Environment, Preload, PerspectiveCamera, Float } from '@react-three/drei'
 import LiquidBust from './LiquidBust'
 import { useStore } from '@/store/useStore'
@@ -34,7 +34,7 @@ export default function HeroScene() {
                 }}
                 className="w-full h-full block"
             >
-                <PerspectiveCamera makeDefault position={[0, 0, 8]} fov={35} />
+                <ResponsiveCamera />
 
                 {/* Lights */}
                 <ambientLight intensity={0.5} />
@@ -48,10 +48,27 @@ export default function HeroScene() {
                         rotationIntensity={isReducedMotion ? 0 : 0.5}
                         floatIntensity={isReducedMotion ? 0 : 0.5}
                     >
-                        <LiquidBust mouseRef={mouseRef} isHovering={isHovering} />
+                        {/* Center the bust in the new 50% container */}
+                        <group position={[0, -1.0, 0]}>
+                            <LiquidBust mouseRef={mouseRef} isHovering={isHovering} />
+                        </group>
                     </Float>
                 </Suspense>
             </Canvas>
         </div>
     )
+}
+
+function ResponsiveCamera() {
+    const { size } = useThree()
+    // We are now in a 50% width container on desktop, or 100% on mobile
+    const isMobile = size.width < 768
+
+    // Desktop: Container is narrower (50vw), so we can pull camera back slightly to fit shoulders contextually
+    // Mobile: 100vw, but shorter height.
+
+    // Z = 4.5 seem solid for half-width container to fill it well.
+    const targetZ = isMobile ? 5.2 : 4.5
+
+    return <PerspectiveCamera makeDefault position={[0, 0, targetZ]} fov={35} />
 }

@@ -33,7 +33,7 @@ export default function Contact() {
                                     </div>
                                     hello@grit.cool
                                 </a>
-                                <a href="#" className="flex items-center gap-4 text-xl hover:text-neon-blue transition-colors group">
+                                <a href="https://calendly.com/gritlabsinit" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 text-xl hover:text-neon-blue transition-colors group">
                                     <div className="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center group-hover:border-neon-blue transition-colors">
                                         <Calendar size={20} />
                                     </div>
