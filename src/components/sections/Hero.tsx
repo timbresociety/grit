@@ -22,7 +22,7 @@ export default function Hero() {
     const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
     return (
-        <section ref={containerRef} className="relative min-h-screen flex flex-col md:flex-row overflow-hidden bg-[#050505]">
+        <section ref={containerRef} className="relative min-h-screen flex flex-col-reverse md:flex-row overflow-hidden bg-[#050505]">
 
             {/* Background Ambience (Global) */}
             <div className="absolute inset-0 z-0 pointer-events-none">
@@ -31,7 +31,7 @@ export default function Hero() {
             </div>
 
             {/* Left Column: Content */}
-            <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center p-6 md:p-12 lg:p-20 pt-32 md:pt-0">
+            <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center p-6 md:p-12 lg:p-20 pt-8 md:pt-0">
                 <motion.div
                     style={{ y, opacity }}
                     className="w-full max-w-xl flex flex-col justify-center items-start text-left"
@@ -83,11 +83,6 @@ export default function Hero() {
 
             {/* Right Column: 3D Scene */}
             <div className="w-full md:w-1/2 h-[50vh] md:h-screen relative z-10">
-                {/* Hint overlay for Mobile */}
-                <div className="absolute bottom-8 left-1/2 -translate-x-1/2 md:hidden z-20 pointer-events-none text-white/30 text-xs uppercase tracking-widest animate-pulse">
-                    Tap bust to inspect
-                </div>
-
                 <Suspense fallback={null}>
                     <HeroScene />
                 </Suspense>
