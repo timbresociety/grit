@@ -1,0 +1,118 @@
+{
+  "description": "Lottie animations extracted from Cortivo AI website (kuzushilabs.xyz)",
+  "extractedAt": "2025-01-09",
+  "totalAnimations": 13,
+  "sections": {
+    "services": {
+      "generativeAI": [
+        {
+          "title": "Voice Agents",
+          "description": "Build intelligent voice agents that understand context and deliver natural conversations. From customer support to internal tools, AI that speaks for your brand",
+          "file": "voice-agents.json",
+          "dimensions": "800x800",
+          "fps": 30
+        },
+        {
+          "title": "Multi-Agent Systems",
+          "description": "Orchestrate complex multi-agent workflows that collaborate to solve real problems. AI agents that reason, plan, and act autonomously",
+          "file": "multi-agent-systems.json",
+          "dimensions": "1920x1080",
+          "fps": 60
+        },
+        {
+          "title": "Model Finetuning",
+          "description": "Fine-tune state-of-the-art LLMs to fit your unique business needs. Get personalized models that outperform out-of-the-box solutions",
+          "file": "model-finetuning.json",
+          "dimensions": "106x106",
+          "fps": 60
+        }
+      ],
+      "aiProducts": [
+        {
+          "title": "UX/UI Design",
+          "description": "Design user-ready AI products with intuitive interfaces. We make complex AI feel simple and accessible",
+          "file": "ux-ui-design.json",
+          "dimensions": "500x500",
+          "fps": 60
+        },
+        {
+          "title": "Scalable Infrastructure",
+          "description": "Build infrastructure designed for AI workloads. High-performance, secure backends that handle modern AI demands",
+          "file": "scalable-infrastructure.json",
+          "dimensions": "550x550",
+          "fps": 30
+        },
+        {
+          "title": "Multi-Platform Delivery",
+          "description": "Web, mobile, and multi-platform AI products. From concept to production, we handle everything",
+          "file": "multi-platform-delivery.json",
+          "dimensions": "171x125",
+          "fps": 30
+        }
+      ],
+      "enterpriseLLMOps": [
+        {
+          "title": "Rigorous Evaluations",
+          "description": "Test and validate AI systems with comprehensive evaluation frameworks. Ensure your models perform reliably before production",
+          "file": "rigorous-evaluations.json",
+          "dimensions": "500x500",
+          "fps": 60
+        },
+        {
+          "title": "Custom Guardrails",
+          "description": "Implement safety measures tailored to your use case. Content filtering, compliance checks, and controls you can trust",
+          "file": "custom-guardrails.json",
+          "dimensions": "800x800",
+          "fps": 30
+        },
+        {
+          "title": "Continuous Observability",
+          "description": "Monitor AI systems in production with real-time observability. Track performance, detect drift, and maintain quality at scale",
+          "file": "continuous-observability.json",
+          "dimensions": "1000x1000",
+          "fps": 25
+        }
+      ]
+    },
+    "process": [
+      {
+        "step": 1,
+        "title": "Ideation",
+        "description": "We'll get on a call to ideate with you & understand your vision and goals",
+        "file": "process-ideation.json",
+        "dimensions": "500x500",
+        "fps": 30
+      },
+      {
+        "step": 2,
+        "title": "Development",
+        "description": "With your business goals in mind, we'll design & develop the product",
+        "file": "process-development.json",
+        "dimensions": "1200x1200",
+        "fps": 30
+      },
+      {
+        "step": 3,
+        "title": "Launch",
+        "description": "We will launch the product & continue to support you with updates & more",
+        "file": "process-launch.json",
+        "dimensions": "474x1024",
+        "fps": 24
+      }
+    ],
+    "other": [
+      {
+        "title": "Hero/Background Rocket",
+        "description": "Rocket animation, likely used in hero section or as decorative element",
+        "file": "hero-rocket.json",
+        "dimensions": "1147x1722",
+        "fps": 60
+      }
+    ]
+  },
+  "usage": {
+    "react": "import Lottie from 'lottie-react';\nimport animationData from './voice-agents.json';\n\n<Lottie animationData={animationData} loop={true} />",
+    "html": "<script src=\"https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js\"></script>\n<lottie-player src=\"voice-agents.json\" background=\"transparent\" speed=\"1\" loop autoplay></lottie-player>",
+    "nextjs": "import dynamic from 'next/dynamic';\nconst Lottie = dynamic(() => import('lottie-react'), { ssr: false });\nimport animationData from './voice-agents.json';\n\n<Lottie animationData={animationData} loop={true} />"
+  }
+}

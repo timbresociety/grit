@@ -3,15 +3,17 @@
 import { useRef, useState } from 'react'
 import { motion, useSpring, useTransform, useMotionValue } from 'framer-motion'
 import { LucideIcon } from 'lucide-react'
+import LottieIcon from './LottieIcon'
 
 interface ServiceCardProps {
     title: string
     description: string
     bullets: string[]
     icon: LucideIcon
+    lottieIcon?: string
 }
 
-export default function ServiceCard({ title, description, bullets, icon: Icon }: ServiceCardProps) {
+export default function ServiceCard({ title, description, bullets, icon: Icon, lottieIcon }: ServiceCardProps) {
     const [isFlipped, setIsFlipped] = useState(false)
     const ref = useRef<HTMLDivElement>(null)
 
@@ -60,7 +62,11 @@ export default function ServiceCard({ title, description, bullets, icon: Icon }:
                     />
 
                     <div className="text-neon-blue/80">
-                        <Icon size={48} strokeWidth={1} />
+                        {lottieIcon ? (
+                            <LottieIcon src={lottieIcon} className="w-16 h-16" />
+                        ) : (
+                            <Icon size={48} strokeWidth={1} />
+                        )}
                     </div>
 
                     <div>
@@ -92,3 +98,4 @@ export default function ServiceCard({ title, description, bullets, icon: Icon }:
         </div>
     )
 }
+
