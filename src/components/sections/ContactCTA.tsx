@@ -66,24 +66,16 @@ export default function ContactCTA() {
                 />
             </motion.div>
 
-            {/* Chapter Header */}
+            {/* Section Header */}
             <div
                 ref={headerRef}
                 className="relative z-10 text-center py-20 md:py-32 border-b border-border"
             >
-                <motion.span
-                    className="chapter-number block mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.1 }}
-                >
-                    Final Chapter
-                </motion.span>
                 <motion.h2
                     className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.2, duration: 0.8 }}
+                    transition={{ delay: 0.1, duration: 0.8 }}
                 >
                     Ready to Build?
                 </motion.h2>

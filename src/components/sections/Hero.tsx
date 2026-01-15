@@ -1,21 +1,30 @@
 "use client"
 
-import { useRef, useState, useCallback, Suspense } from 'react'
+import { useRef, useState, useCallback, Suspense, ComponentType } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Clock, Shield, Sparkles } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useHeroMouseTracker } from '@/hooks/useHeroMouseTracker'
+import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 
-// Lazy Load 3D Background Scene
-const HeroScene = dynamic(() => import('@/components/3d/HeroScene'), {
-    ssr: false,
-    loading: () => (
-        <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url('/images/hero-bg.jpg')` }}
-        />
-    )
-})
+// HeroScene props type
+interface HeroSceneProps {
+    mouseRef: React.MutableRefObject<{ x: number; y: number }>
+    isHovering: boolean
+    loadingPhase?: number
+    loadingProgress?: number
+}
+
+// Lazy Load 3D Background Scene with proper typing
+const HeroScene = dynamic<HeroSceneProps>(
+    () => import('@/components/3d/HeroScene').then(mod => mod.default as ComponentType<HeroSceneProps>),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="absolute inset-0 bg-black" />
+        )
+    }
+)
 
 const highlights = [
     { icon: Clock, text: '8–12 week cycles' },
@@ -33,6 +42,9 @@ export default function Hero() {
     // Mouse tracker for reveal effect
     const { mouseRef, isHovering } = useHeroMouseTracker(containerRef)
 
+    // Loading state
+    const { phase, progress, isComplete } = useHeroLoading()
+
     // Reveal should be active only when hovering AND not over a panel
     const isRevealActive = isHovering && !isOverPanel
 
@@ -49,20 +61,31 @@ export default function Hero() {
     const handlePanelEnter = useCallback(() => setIsOverPanel(true), [])
     const handlePanelLeave = useCallback(() => setIsOverPanel(false), [])
 
+    // UI should only show after phase 3
+    const showUI = phase >= 3
+
     return (
         <section
             id="hero"
             ref={containerRef}
-            className="relative min-h-screen flex items-center overflow-hidden bg-background"
+            className="relative min-h-screen flex items-center overflow-hidden bg-black"
+            style={{ cursor: isOverPanel ? 'auto' : 'none' }}
         >
             {/* WebGL Background with Reveal Effect */}
             <motion.div
                 className="absolute inset-0 z-0"
                 style={{ y: prefersReducedMotion ? 0 : backgroundY }}
             >
-                <HeroScene mouseRef={mouseRef} isHovering={isRevealActive} />
-                {/* Bottom fade */}
-                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
+                <HeroScene
+                    mouseRef={mouseRef}
+                    isHovering={isRevealActive}
+                    loadingPhase={phase}
+                    loadingProgress={progress}
+                />
+                {/* Bottom fade - only show after loading */}
+                {showUI && (
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
+                )}
             </motion.div>
 
             {/* Main Content - Centered */}
@@ -81,22 +104,19 @@ export default function Hero() {
                         <motion.div
                             className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 md:p-8 mb-6 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
                             initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            animate={showUI ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                            transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
                             onMouseEnter={handlePanelEnter}
                             onMouseLeave={handlePanelLeave}
                         >
                             <h1
                                 className="text-black"
                                 style={{
-                                    fontSize: 'clamp(3rem, 8vw, 6rem)',
-                                    fontWeight: 400,
-                                    lineHeight: 1.05,
                                     letterSpacing: '-0.02em'
                                 }}
                             >
-                                <span style={{ fontFamily: 'var(--font-serif)' }}>Engineered</span><br />
-                                <span style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic' }}>to Endure.</span>
+                                <span style={{ fontFamily: 'var(--font-imperial)', paddingRight: '0.2em' }}>Engineered</span><br />
+                                <span style={{ fontFamily: 'var(--font-serif)' }}>to Endure.</span>
                             </h1>
                         </motion.div>
 
@@ -104,8 +124,8 @@ export default function Hero() {
                         <motion.div
                             className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
                             initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, delay: 0.5 }}
+                            animate={showUI ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
                             onMouseEnter={handlePanelEnter}
                             onMouseLeave={handlePanelLeave}
                         >
@@ -113,8 +133,8 @@ export default function Hero() {
                             <p className="text-base md:text-lg text-neutral-800 max-w-xl leading-relaxed mb-6">
                                 We build bespoke AI and Blockchain software for teams that think long term.
                                 <span
-                                    className="font-medium"
-                                    style={{ fontFamily: 'var(--font-display)', color: '#1A1A1A' }}
+                                    className="font-medium block mt-2"
+                                    style={{ fontFamily: 'var(--font-serif)', color: '#1A1A1A' }}
                                 > Enterprise grade. Operator led.</span>
                             </p>
 
@@ -154,8 +174,12 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* Bottom Gradient Fade */}
-            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
-        </section>
+            {/* Bottom Gradient Fade - only show after loading */}
+            {
+                showUI && (
+                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
+                )
+            }
+        </section >
     )
 }

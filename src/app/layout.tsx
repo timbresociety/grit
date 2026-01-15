@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Sans, Cormorant_Garamond, Playfair_Display } from 'next/font/google'
+import { DM_Sans, Cormorant_Garamond, Playfair_Display, Imperial_Script } from 'next/font/google'
 import './globals.css'
 import Navbar from '@/components/ui/Navbar'
 import ChapterNav from '@/components/ui/ChapterNav'
 import PerformanceGate from '@/components/providers/PerformanceGate'
 import MotionProvider from '@/components/providers/MotionProvider'
+import { HeroLoadingProvider } from '@/contexts/HeroLoadingContext'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -25,6 +26,13 @@ const playfair = Playfair_Display({
   variable: '--font-playfair',
   display: 'swap',
   weight: ['400', '500', '600', '700', '800', '900']
+})
+
+const imperialScript = Imperial_Script({
+  subsets: ['latin'],
+  variable: '--font-imperial',
+  display: 'swap',
+  weight: ['400']
 })
 
 export const metadata: Metadata = {
@@ -68,15 +76,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${playfair.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${playfair.variable} ${imperialScript.variable}`}>
       <body className="bg-background text-foreground antialiased overflow-x-hidden">
         <PerformanceGate>
           <MotionProvider>
-            <Navbar />
-            <ChapterNav />
-            <main className="relative">
-              {children}
-            </main>
+            <HeroLoadingProvider>
+              <Navbar />
+              <main className="relative">
+                {children}
+              </main>
+            </HeroLoadingProvider>
           </MotionProvider>
         </PerformanceGate>
       </body>

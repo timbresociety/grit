@@ -32,9 +32,9 @@ export default function Logos() {
                     transition={{ duration: 0.6 }}
                 >
                     {/* Label */}
-                    <span className="label block mb-8">
-                        Built by Operators From
-                    </span>
+                    <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-8 flex items-baseline justify-center gap-2 flex-wrap">
+                        Built by <span className="font-imperial text-4xl md:text-5xl px-1 text-accent-jewel">Operators</span> From
+                    </h3>
 
                     {/* Logo Row */}
                     <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 lg:gap-20">

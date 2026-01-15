@@ -5,7 +5,7 @@ import { shaderMaterial, useTexture } from '@react-three/drei'
 import { useRef, Suspense } from 'react'
 import * as THREE from 'three'
 
-// --- PIXEL DISINTEGRATION REVEAL SHADER ---
+// --- PIXEL LOADING + REVEAL SHADER ---
 const TRAIL_LENGTH = 20
 
 const PixelDisintegrateMaterial = shaderMaterial(
@@ -17,6 +17,9 @@ const PixelDisintegrateMaterial = shaderMaterial(
         uForeground: null as THREE.Texture | null,
         uBackground: null as THREE.Texture | null,
         uRevealStrength: 0.0, // 0 = closed, 1 = fully open
+        // Loading uniforms
+        uLoadingPhase: 0,     // 0=black, 1=cyber, 2=renaissance, 3+=complete
+        uLoadingProgress: 0.0, // 0-1 progress within current phase
     },
     // Vertex Shader
     `
@@ -35,6 +38,8 @@ const PixelDisintegrateMaterial = shaderMaterial(
     uniform float uTime;
     uniform vec2 uResolution;
     uniform float uRevealStrength;
+    uniform int uLoadingPhase;
+    uniform float uLoadingProgress;
     varying vec2 vUv;
 
     float hash21(vec2 p) {
@@ -67,90 +72,121 @@ const PixelDisintegrateMaterial = shaderMaterial(
     }
 
     void main() {
-      // If reveal is fully closed, just show foreground
-      if(uRevealStrength < 0.01) {
-          gl_FragColor = texture2D(uForeground, vUv);
+      vec2 screenUV = gl_FragCoord.xy / uResolution;
+      float aspect = uResolution.x / uResolution.y;
+      
+      // Square pixel grid - consistent across all effects
+      // Use aspect-corrected coordinates for square pixels
+      float pixelScale = 80.0; // Smaller pixels (higher = smaller)
+      vec2 squarePixelUV = vec2(screenUV.x * aspect, screenUV.y) * pixelScale;
+      vec2 pixelId = floor(squarePixelUV);
+      float pixelRandom = hash21(pixelId);
+      
+      // Sample textures
+      vec4 fgColor = texture2D(uForeground, vUv);  // Renaissance (marble)
+      vec4 bgColor = texture2D(uBackground, vUv);  // Cyber
+      
+      // ═══════════════════════════════════════════════════════════════════════
+      // LOADING PHASE LOGIC
+      // ═══════════════════════════════════════════════════════════════════════
+      
+      // Phase 0: Black screen
+      if(uLoadingPhase == 0) {
+          gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
           return;
       }
       
-      vec2 screenUV = gl_FragCoord.xy / uResolution;
-      float aspect = uResolution.x / uResolution.y;
-      vec2 aspectCorrectedUV = vec2(screenUV.x * aspect, screenUV.y);
+      // Distance from center for directional reveals (aspect corrected)
+      vec2 center = vec2(0.5 * aspect, 0.5);
+      vec2 aspectUV = vec2(screenUV.x * aspect, screenUV.y);
+      float distFromCenter = distance(aspectUV, center) / (0.707 * aspect);
       
-      // Calculate distance to trail with influence
-      float minDist = 100.0;
-      
-      for (int i = 0; i < ${TRAIL_LENGTH}; i++) {
-        vec2 pos = vec2(uTrail[i].x * aspect, uTrail[i].y);
-        float d = distance(aspectCorrectedUV, pos);
-        float influence = 1.0 - (float(i) / float(${TRAIL_LENGTH} - 1));
-        influence = pow(influence, 1.5);
-        if(influence > 0.01 && pos.x < 2.0) { // Only consider valid trail points
-            minDist = min(minDist, d / influence);
-        }
+      // Phase 1: Cyber background reveals from EDGES to CENTER
+      if(uLoadingPhase == 1) {
+          float edgeToCenter = 1.0 - distFromCenter;
+          float revealProgress = uLoadingProgress * uLoadingProgress * (3.0 - 2.0 * uLoadingProgress);
+          float threshold = edgeToCenter * 0.7 + pixelRandom * 0.3;
+          float showPixel = step(threshold, revealProgress * 1.1);
+          
+          vec3 color = mix(vec3(0.0), bgColor.rgb, showPixel);
+          gl_FragColor = vec4(color, 1.0);
+          return;
       }
       
-      // Sample textures
-      vec4 fgColor = texture2D(uForeground, vUv);
-      vec4 bgColor = texture2D(uBackground, vUv);
+      // Phase 2: Renaissance overlays from CENTER to EDGES
+      if(uLoadingPhase == 2) {
+          float centerToEdge = distFromCenter;
+          float overlayRandom = hash21(pixelId + vec2(42.0, 13.0));
+          float overlayProgress = uLoadingProgress * uLoadingProgress * (3.0 - 2.0 * uLoadingProgress);
+          float threshold = centerToEdge * 0.7 + overlayRandom * 0.3;
+          float showOverlay = step(threshold, overlayProgress * 1.1);
+          
+          vec3 color = mix(bgColor.rgb, fgColor.rgb, showOverlay);
+          gl_FragColor = vec4(color, 1.0);
+          return;
+      }
       
-      // Dynamic radius based on reveal strength
-      // Open: center→outward, Close: outward→center
-      float maxCoreRadius = 0.12;
-      float maxDisintegrateEnd = 0.25;
+      // ═══════════════════════════════════════════════════════════════════════
+      // NORMAL INTERACTIVE MODE (Phase 3+) - Pixel Trail Reveal
+      // ═══════════════════════════════════════════════════════════════════════
       
-      // Scale radii by reveal strength
-      float coreRadius = maxCoreRadius * uRevealStrength;
-      float disintegrateEnd = maxDisintegrateEnd * uRevealStrength;
-      
-      // If cursor is off-screen or reveal too small
-      if(minDist > 2.0 || disintegrateEnd < 0.01) {
+      // If reveal is fully closed, just show foreground (renaissance)
+      if(uRevealStrength < 0.01) {
           gl_FragColor = fgColor;
           return;
       }
       
-      // Pixel grid
-      float pixelScale = 60.0;
-      vec2 pixelUV = screenUV * pixelScale;
-      vec2 pixelId = floor(pixelUV);
+      // Use screenUV directly for position matching (trail is in 0-1 UV space)
+      // Get pixel center in screen UV space
+      vec2 pixelCenterScreen = (floor(screenUV * pixelScale) + 0.5) / pixelScale;
       
-      // Random threshold per pixel
-      float pixelRandom = hash21(pixelId);
+      // Check each trail point to see if this pixel should be revealed
+      float showCyber = 0.0;
       
-      // Pixel breaks when: distance < threshold (scaled by reveal strength)
-      // Center pixels break first (low threshold), edge pixels break last (high threshold)
-      float pixelThreshold = coreRadius + pixelRandom * (disintegrateEnd - coreRadius);
-      
-      // Organic variation
-      float noise = snoise(screenUV * 8.0 + uTime * 0.3) * 0.02 * uRevealStrength;
-      pixelThreshold += noise;
-      
-      // Time wobble at edges
-      float timeWobble = sin(uTime * 2.5 + pixelRandom * 6.28) * 0.01 * uRevealStrength;
-      pixelThreshold += timeWobble;
-      
-      // Show background if distance < threshold
-      float showBackground = step(minDist, pixelThreshold);
-      
-      // Build final color
-      vec3 finalColor;
-      
-      if(minDist < coreRadius * 0.8) {
-          // Core: background
-          finalColor = bgColor.rgb;
-      } else if(minDist > disintegrateEnd) {
-          // Outside: foreground
-          finalColor = fgColor.rgb;
-      } else {
-          // Disintegration zone
-          finalColor = showBackground > 0.5 ? bgColor.rgb : fgColor.rgb;
+      for (int i = 0; i < ${TRAIL_LENGTH}; i++) {
+        vec2 trailPos = uTrail[i];
+        
+        // Skip invalid trail positions
+        if(trailPos.x > 1.5 || trailPos.x < 0.0) continue;
+        
+        // Trail influence decreases for older points
+        float trailAge = float(i) / float(${TRAIL_LENGTH} - 1);
+        float influence = 1.0 - trailAge;
+        influence = pow(influence, 1.2);
+        
+        // Reveal radius for this trail point (larger hollow)
+        float trailRadius = 0.18 * influence * uRevealStrength;
+        
+        // Distance from pixel center to trail point (aspect corrected)
+        vec2 diff = pixelCenterScreen - trailPos;
+        diff.x *= aspect;
+        float dist = length(diff);
+        
+        // Solid core - inner 70% is fully visible
+        float coreRadius = trailRadius * 0.7;
+        
+        // Outer edge - pixelated boundary for imperfect decagon look
+        float edgeRadius = trailRadius;
+        
+        if(dist < coreRadius) {
+            // Inside solid core - fully reveal
+            showCyber = 1.0;
+            break;
+        } else if(dist < edgeRadius) {
+            // Edge zone - pixelated boundary
+            // Use pixel random to create jagged decagon-like edge
+            float edgeProgress = (dist - coreRadius) / (edgeRadius - coreRadius);
+            float edgeThreshold = 0.3 + pixelRandom * 0.7;
+            
+            if(edgeProgress < edgeThreshold) {
+                showCyber = 1.0;
+                break;
+            }
+        }
       }
       
-      // Subtle shimmer
-      if(minDist < coreRadius) {
-          float shimmer = snoise(screenUV * 20.0 + uTime * 1.2) * 0.5 + 0.5;
-          finalColor += vec3(0.3, 0.5, 0.8) * shimmer * 0.05 * uRevealStrength;
-      }
+      // Final color - hard pixel switch, no blending
+      vec3 finalColor = showCyber > 0.5 ? bgColor.rgb : fgColor.rgb;
 
       gl_FragColor = vec4(finalColor, 1.0);
     }
@@ -169,9 +205,11 @@ declare module '@react-three/fiber' {
 interface BackgroundPlaneProps {
     mouseRef: React.MutableRefObject<{ x: number; y: number }>
     isHovering: boolean
+    loadingPhase: number
+    loadingProgress: number
 }
 
-function BackgroundPlane({ mouseRef, isHovering }: BackgroundPlaneProps) {
+function BackgroundPlane({ mouseRef, isHovering, loadingPhase, loadingProgress }: BackgroundPlaneProps) {
     const matRef = useRef<any>(null)
     const { size, gl, viewport } = useThree()
 
@@ -210,7 +248,9 @@ function BackgroundPlane({ mouseRef, isHovering }: BackgroundPlaneProps) {
         trail[0].y = currentMouse.current.y
 
         // Animate reveal strength: expand when hovering, contract when not
-        const targetStrength = isHovering ? 1.0 : 0.0
+        // Only allow reveal interaction after loading is complete (phase 3+)
+        const canReveal = loadingPhase >= 3
+        const targetStrength = (isHovering && canReveal) ? 1.0 : 0.0
         const strengthLerp = 4.0 * delta // Speed of open/close
         revealStrength.current = THREE.MathUtils.lerp(revealStrength.current, targetStrength, strengthLerp)
 
@@ -222,6 +262,9 @@ function BackgroundPlane({ mouseRef, isHovering }: BackgroundPlaneProps) {
             matRef.current.uForeground = foregroundTex
             matRef.current.uBackground = backgroundTex
             matRef.current.uRevealStrength = revealStrength.current
+            // Loading uniforms
+            matRef.current.uLoadingPhase = loadingPhase
+            matRef.current.uLoadingProgress = loadingProgress
         }
     })
 
@@ -240,9 +283,11 @@ function BackgroundPlane({ mouseRef, isHovering }: BackgroundPlaneProps) {
 interface HeroSceneProps {
     mouseRef: React.MutableRefObject<{ x: number; y: number }>
     isHovering: boolean
+    loadingPhase?: number
+    loadingProgress?: number
 }
 
-export default function HeroScene({ mouseRef, isHovering }: HeroSceneProps) {
+export default function HeroScene({ mouseRef, isHovering, loadingPhase = 4, loadingProgress = 1 }: HeroSceneProps) {
     return (
         <div className="absolute inset-0 w-full h-full">
             <Canvas
@@ -257,7 +302,12 @@ export default function HeroScene({ mouseRef, isHovering }: HeroSceneProps) {
                 className="w-full h-full block"
             >
                 <Suspense fallback={null}>
-                    <BackgroundPlane mouseRef={mouseRef} isHovering={isHovering} />
+                    <BackgroundPlane
+                        mouseRef={mouseRef}
+                        isHovering={isHovering}
+                        loadingPhase={loadingPhase}
+                        loadingProgress={loadingProgress}
+                    />
                 </Suspense>
             </Canvas>
         </div>

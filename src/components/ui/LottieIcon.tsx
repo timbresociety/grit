@@ -37,6 +37,9 @@ export default function LottieIcon({
             loop={loop}
             autoplay={autoplay}
             className={className}
+            style={{
+                filter: 'invert(1)',
+            }}
         />
     )
 }

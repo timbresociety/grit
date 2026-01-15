@@ -8,10 +8,10 @@ import Footer from '@/components/ui/Footer'
 
 export default function Home() {
   return (
-    <div className="flex flex-col w-full overflow-hidden">
+    <div className="flex flex-col w-full">
       <Hero />
-      <Logos />
       <Services />
+      <Logos />
       <Process />
       <WorkTeaser />
       <ContactCTA />

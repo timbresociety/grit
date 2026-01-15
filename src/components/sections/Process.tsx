@@ -52,25 +52,51 @@ const phases: Phase[] = [
 
 function PhaseCard({ phase, index }: { phase: Phase; index: number }) {
     const ref = useRef<HTMLDivElement>(null)
-    const isInView = useInView(ref, { once: true, margin: "-50px" })
+    const containerRef = useRef<HTMLDivElement>(null)
+
+    // Track scroll progress of the specific card container to animate scale/opacity
+    // when it gets covered by the next one
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ['start end', 'start start']
+    })
+
+    // Scale down slightly as it moves up to create depth
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95])
+
+    // Dynamic top position for stacking effect
+    // Fixed base offset since header is no longer sticky
+    const topPosition = `calc(6rem + ${index * 1}rem)`
 
     return (
         <motion.div
-            ref={ref}
-            className="relative"
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            ref={containerRef}
+            className="sticky mb-24 last:mb-0"
+            style={{
+                top: topPosition,
+                zIndex: index
+            }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
         >
             {/* Timeline Connector */}
             {index < phases.length - 1 && (
-                <div className="hidden md:block absolute left-8 top-20 bottom-0 w-px bg-border" />
+                <div className="hidden md:block absolute left-8 top-20 -bottom-24 w-px bg-border" />
             )}
 
-            <div className="panel panel-hover p-6 md:p-8 relative">
+            <motion.div
+                ref={ref}
+                className="panel panel-hover p-6 md:p-8 relative bg-background"
+                style={{
+                    // Optional: subtle scale effect as it sticks
+                    // scale 
+                }}
+            >
                 {/* Phase Badge */}
                 <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-full bg-foreground text-background flex items-center justify-center font-serif text-xl font-medium">
+                    <div className="w-16 h-16 rounded-full bg-foreground text-background flex items-center justify-center font-serif text-xl font-medium shadow-sm">
                         {String(phase.id).padStart(2, '0')}
                     </div>
                     <div>
@@ -101,7 +127,7 @@ function PhaseCard({ phase, index }: { phase: Phase; index: number }) {
                         ))}
                     </div>
                 </div>
-            </div>
+            </motion.div>
         </motion.div>
     )
 }
@@ -112,39 +138,24 @@ export default function Process() {
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
     const prefersReducedMotion = useReducedMotion()
 
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start end", "end start"]
-    })
-
-    const progressWidth = useTransform(scrollYProgress, [0.1, 0.9], ["0%", "100%"])
-
     return (
         <section id="process" ref={sectionRef} className="bg-background scroll-mt-32">
 
-            {/* Chapter Header - Full Width */}
+            {/* Section Header - Static */}
             <div
                 ref={headerRef}
-                className="text-center py-20 md:py-32 border-b border-border"
+                className="text-center pt-20 md:pt-24 pb-12 border-b border-border"
             >
-                <motion.span
-                    className="chapter-number block mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.1 }}
-                >
-                    Chapter 03
-                </motion.span>
                 <motion.h2
-                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"
+                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4 flex items-baseline justify-center gap-3 flex-wrap"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.2, duration: 0.8 }}
+                    transition={{ delay: 0.1, duration: 0.8 }}
                 >
-                    Build Sprint
+                    <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Build</span> Sprint
                 </motion.h2>
                 <motion.p
-                    className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-8"
+                    className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-6"
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.3 }}
@@ -152,26 +163,11 @@ export default function Process() {
                     A proven 12-week engagement framework. From discovery to production,
                     with complete transparency at every phase.
                 </motion.p>
-
-                {/* Progress Bar */}
-                <motion.div
-                    className="max-w-md mx-auto"
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : {}}
-                    transition={{ delay: 0.4 }}
-                >
-                    <div className="h-1 bg-border rounded-full overflow-hidden">
-                        <motion.div
-                            className="h-full bg-accent-jewel rounded-full"
-                            style={{ width: prefersReducedMotion ? "100%" : progressWidth }}
-                        />
-                    </div>
-                </motion.div>
             </div>
 
             {/* Timeline */}
-            <div className="container-editorial py-16 md:py-24">
-                <div className="space-y-6 md:space-y-8 max-w-4xl mx-auto">
+            <div className="container-editorial pt-12 pb-16 md:pb-32">
+                <div className="max-w-4xl mx-auto relative">
                     {phases.map((phase, i) => (
                         <PhaseCard key={phase.id} phase={phase} index={i} />
                     ))}
@@ -196,6 +192,6 @@ export default function Process() {
                 </motion.div>
             </div>
 
-        </section>
+        </section >
     )
 }

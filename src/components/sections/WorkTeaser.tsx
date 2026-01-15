@@ -81,7 +81,6 @@ function CaseStudyCard({ study, index, featured }: CaseStudyCardProps) {
                     {/* Right: Content */}
                     <div>
                         <div className="flex items-center gap-3 mb-4">
-                            <span className="chapter-number">Case {String(study.id).padStart(2, '0')}</span>
                             <span className="label">{study.category}</span>
                         </div>
                         <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-2">
@@ -139,7 +138,6 @@ function CaseStudyCard({ study, index, featured }: CaseStudyCardProps) {
             </div>
 
             <div className="flex items-center gap-3 mb-2">
-                <span className="chapter-number">Case {String(study.id).padStart(2, '0')}</span>
                 <span className="label">{study.category}</span>
             </div>
 
@@ -159,24 +157,15 @@ export default function WorkTeaser() {
     return (
         <section id="work" className="bg-background scroll-mt-32">
 
-            {/* Chapter Header */}
             <div
                 ref={headerRef}
                 className="text-center py-20 md:py-32 border-b border-border"
             >
-                <motion.span
-                    className="chapter-number block mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.1 }}
-                >
-                    Chapter 04
-                </motion.span>
                 <motion.h2
                     className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.2, duration: 0.8 }}
+                    transition={{ delay: 0.1, duration: 0.8 }}
                 >
                     Proof of Execution
                 </motion.h2>
