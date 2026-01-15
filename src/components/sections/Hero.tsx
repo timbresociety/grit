@@ -1,93 +1,161 @@
 "use client"
 
-import { useRef, Suspense } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { ArrowRight, ShieldCheck, Zap } from 'lucide-react'
+import { useRef, useState, useCallback, Suspense } from 'react'
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { ArrowRight, Clock, Shield, Sparkles } from 'lucide-react'
 import dynamic from 'next/dynamic'
+import { useHeroMouseTracker } from '@/hooks/useHeroMouseTracker'
 
-// Lazy Load 3D Scene - Critical for LCP
+// Lazy Load 3D Background Scene
 const HeroScene = dynamic(() => import('@/components/3d/HeroScene'), {
     ssr: false,
-    loading: () => null
+    loading: () => (
+        <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url('/images/hero-bg.jpg')` }}
+        />
+    )
 })
+
+const highlights = [
+    { icon: Clock, text: '8–12 week cycles' },
+    { icon: Shield, text: 'Security-first' },
+    { icon: Sparkles, text: 'Audit-ready' },
+]
 
 export default function Hero() {
     const containerRef = useRef<HTMLDivElement>(null)
+    const prefersReducedMotion = useReducedMotion()
+
+    // Track if cursor is over a glass panel (text frame)
+    const [isOverPanel, setIsOverPanel] = useState(false)
+
+    // Mouse tracker for reveal effect
+    const { mouseRef, isHovering } = useHeroMouseTracker(containerRef)
+
+    // Reveal should be active only when hovering AND not over a panel
+    const isRevealActive = isHovering && !isOverPanel
+
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     })
 
-    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"])
-    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+    const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
+    const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+    const contentY = useTransform(scrollYProgress, [0, 0.5], ["0%", "10%"])
+
+    // Panel hover handlers
+    const handlePanelEnter = useCallback(() => setIsOverPanel(true), [])
+    const handlePanelLeave = useCallback(() => setIsOverPanel(false), [])
 
     return (
-        <section ref={containerRef} className="relative min-h-screen flex flex-col-reverse md:flex-row overflow-hidden bg-[#050505]">
+        <section
+            id="hero"
+            ref={containerRef}
+            className="relative min-h-screen flex items-center overflow-hidden bg-background"
+        >
+            {/* WebGL Background with Reveal Effect */}
+            <motion.div
+                className="absolute inset-0 z-0"
+                style={{ y: prefersReducedMotion ? 0 : backgroundY }}
+            >
+                <HeroScene mouseRef={mouseRef} isHovering={isRevealActive} />
+                {/* Bottom fade */}
+                <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
+            </motion.div>
 
-            {/* Background Ambience (Global) */}
-            <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20"></div>
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#050505] z-10"></div>
-            </div>
+            {/* Main Content - Centered */}
+            <div className="relative z-10 container-editorial w-full pointer-events-none">
+                <div className="flex flex-col items-center justify-center min-h-screen py-24">
 
-            {/* Left Column: Content */}
-            <div className="w-full md:w-1/2 relative z-10 flex items-center justify-center p-6 md:p-12 lg:p-20 pt-8 md:pt-0">
-                <motion.div
-                    style={{ y, opacity }}
-                    className="w-full max-w-xl flex flex-col justify-center items-start text-left"
-                >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-neon-blue/30 bg-neon-blue/5 text-neon-blue text-xs font-mono mb-8 uppercase tracking-wider backdrop-blur-sm">
-                        <span className="relative flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-blue opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-neon-blue"></span>
-                        </span>
-                        System Operational
-                    </div>
-
-                    <h1 className="text-4xl md:text-7xl lg:text-[6rem] font-serif font-bold text-white leading-[0.9] tracking-tighter mb-6">
-                        ENGINEERED<br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">
-                            TO ENDURE.
-                        </span>
-                    </h1>
-
-                    <p className="text-lg md:text-xl text-gray-400 font-light max-w-lg mb-10 leading-relaxed">
-                        We build bespoke AI and Blockchain software for teams that think long term.
-                        <br /><span className="text-white">Enterprise grade. Operator led.</span>
-                    </p>
-
-                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-                        <a
-                            href="https://calendly.com/gritlabsinit"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="group relative px-8 py-4 bg-neon-blue text-black font-bold text-sm uppercase tracking-widest overflow-hidden inline-block text-center"
+                    {/* Copy & CTA */}
+                    <motion.div
+                        className="max-w-2xl pointer-events-auto text-center"
+                        style={{
+                            opacity: prefersReducedMotion ? 1 : contentOpacity,
+                            y: prefersReducedMotion ? 0 : contentY
+                        }}
+                    >
+                        {/* Main Headline - Glass panel with hover detection */}
+                        <motion.div
+                            className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 md:p-8 mb-6 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+                            initial={{ opacity: 0, y: 30 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            onMouseEnter={handlePanelEnter}
+                            onMouseLeave={handlePanelLeave}
                         >
-                            <span className="relative z-10 flex items-center justify-center gap-2">
-                                Book a build sprint <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                            </span>
-                            <div className="absolute inset-0 bg-white transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out z-0"></div>
-                        </a>
-                    </div>
+                            <h1
+                                className="text-black"
+                                style={{
+                                    fontSize: 'clamp(3rem, 8vw, 6rem)',
+                                    fontWeight: 400,
+                                    lineHeight: 1.05,
+                                    letterSpacing: '-0.02em'
+                                }}
+                            >
+                                <span style={{ fontFamily: 'var(--font-serif)' }}>Engineered</span><br />
+                                <span style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic' }}>to Endure.</span>
+                            </h1>
+                        </motion.div>
 
-                    <div className="mt-12 flex items-center gap-8 text-xs text-gray-500 font-mono uppercase tracking-widest">
-                        <div className="flex items-center gap-2">
-                            <Zap size={14} className="text-neon-blue" /> 8–12 week delivery cycles
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <ShieldCheck size={14} className="text-neon-blue" /> Security-first, audit-ready
-                        </div>
-                    </div>
-                </motion.div>
+                        {/* Glass Panel for subhead, buttons, highlights - with hover detection */}
+                        <motion.div
+                            className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.8, delay: 0.5 }}
+                            onMouseEnter={handlePanelEnter}
+                            onMouseLeave={handlePanelLeave}
+                        >
+                            {/* Subhead */}
+                            <p className="text-base md:text-lg text-neutral-800 max-w-xl leading-relaxed mb-6">
+                                We build bespoke AI and Blockchain software for teams that think long term.
+                                <span
+                                    className="font-medium"
+                                    style={{ fontFamily: 'var(--font-display)', color: '#1A1A1A' }}
+                                > Enterprise grade. Operator led.</span>
+                            </p>
+
+                            {/* CTA Buttons */}
+                            <div className="flex flex-col sm:flex-row justify-center gap-4 mb-6">
+                                <a
+                                    href="https://calendly.com/gritlabsinit"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="btn-primary"
+                                >
+                                    Book a Build Sprint <ArrowRight size={16} />
+                                </a>
+                                <a
+                                    href="#services-blockchain"
+                                    className="btn-secondary"
+                                >
+                                    Explore Capabilities
+                                </a>
+                            </div>
+
+                            {/* Highlights */}
+                            <div className="flex flex-wrap justify-center gap-4 pt-4 border-t border-neutral-300/50">
+                                {highlights.map(({ icon: Icon, text }) => (
+                                    <div
+                                        key={text}
+                                        className="flex items-center gap-2 text-sm text-neutral-700"
+                                    >
+                                        <Icon size={14} className="text-neutral-800" />
+                                        <span>{text}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+
+                </div>
             </div>
 
-            {/* Right Column: 3D Scene */}
-            <div className="w-full md:w-1/2 h-[50vh] md:h-screen relative z-10">
-                <Suspense fallback={null}>
-                    <HeroScene />
-                </Suspense>
-            </div>
-
+            {/* Bottom Gradient Fade */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
         </section>
     )
 }
