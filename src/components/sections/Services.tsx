@@ -211,15 +211,14 @@ export default function Services() {
         <section ref={sectionRef} id="services" className="bg-background">
             <div className="container-editorial">
                 {/* Main Section Header */}
-                {/* Main Section Header */}
-                <div ref={headerRef} className="text-center pt-20 md:pt-32 pb-8">
+                <div ref={headerRef} className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border">
                     <motion.h2
-                        className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground mb-6 flex items-baseline justify-center gap-3 flex-wrap"
+                        className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 flex items-baseline justify-center gap-3 flex-wrap"
                         initial={{ opacity: 0, y: 30 }}
                         animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <span className="font-imperial text-5xl md:text-6xl lg:text-7xl text-accent-jewel">Full Spectrum</span> Engineering
+                        <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Full Spectrum</span> Engineering
                     </motion.h2>
                     <motion.p
                         className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
@@ -235,7 +234,6 @@ export default function Services() {
                 <CapabilitySection
                     title="Blockchain"
                     capabilities={blockchainCapabilities}
-                    className="!pt-4 md:!pt-8"
                 />
 
                 {/* Divider */}

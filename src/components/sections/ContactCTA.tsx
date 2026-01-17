@@ -69,7 +69,7 @@ export default function ContactCTA() {
             {/* Section Header */}
             <div
                 ref={headerRef}
-                className="relative z-10 text-center py-20 md:py-32 border-b border-border"
+                className="relative z-10 text-center pt-12 md:pt-20 pb-12 md:pb-16 border-b border-border"
             >
                 <motion.h2
                     className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"

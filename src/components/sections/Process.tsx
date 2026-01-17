@@ -50,84 +50,85 @@ const phases: Phase[] = [
     }
 ]
 
-function PhaseCard({ phase, index }: { phase: Phase; index: number }) {
-    const ref = useRef<HTMLDivElement>(null)
-    const containerRef = useRef<HTMLDivElement>(null)
+function PhaseCard({ phase, index, total }: { phase: Phase; index: number; total: number }) {
+    // Dynamic Top Offset Calculation
+    const topOffset = `calc(var(--stack-offset) + ${index} * 1rem)`
 
-    // Track scroll progress of the specific card container to animate scale/opacity
-    // when it gets covered by the next one
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ['start end', 'start start']
-    })
+    const isLast = index === total - 1
 
-    // Scale down slightly as it moves up to create depth
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.95])
-
-    // Dynamic top position for stacking effect
-    // Fixed base offset since header is no longer sticky
-    const topPosition = `calc(6rem + ${index * 1}rem)`
+    // Last card is RELATIVE, others are STICKY
+    // This allows the last card to scroll normally "over" the stack and then away
+    const positioningStyle = isLast ? {
+        position: 'relative',
+        top: 'auto',
+        marginBottom: 0,
+        marginTop: '-1px' // Slight overlap to prevent pixel gaps
+    } : {
+        position: 'sticky',
+        top: topOffset,
+        marginBottom: 'var(--card-margin)',
+    }
 
     return (
         <motion.div
-            ref={containerRef}
-            className="sticky mb-24 last:mb-0"
+            className="w-full"
             style={{
-                top: topPosition,
-                zIndex: index
-            }}
+                ...positioningStyle,
+                zIndex: index,
+            } as any}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
-            transition={{ duration: 0.6, delay: index * 0.1 }}
+            transition={{ duration: 0.5, delay: index * 0.05 }}
         >
-            {/* Timeline Connector */}
-            {index < phases.length - 1 && (
-                <div className="hidden md:block absolute left-8 top-20 -bottom-24 w-px bg-border" />
-            )}
+            {/* Added bg-background here to ensure opacity covers previous cards */}
+            <div className="panel panel-hover p-6 md:p-8 relative bg-background border border-border/50 shadow-card hover:shadow-card-hover transition-all duration-300">
+                {/* Visual "Connector" behind the cards */}
+                {index < total - 1 && (
+                    <div className="absolute left-8 bottom-0 top-full w-px bg-border/50 -z-10 hidden md:block h-12" />
+                )}
 
-            <motion.div
-                ref={ref}
-                className="panel panel-hover p-6 md:p-8 relative bg-background"
-                style={{
-                    // Optional: subtle scale effect as it sticks
-                    // scale 
-                }}
-            >
-                {/* Phase Badge */}
-                <div className="flex items-center gap-4 mb-4">
-                    <div className="w-16 h-16 rounded-full bg-foreground text-background flex items-center justify-center font-serif text-xl font-medium shadow-sm">
-                        {String(phase.id).padStart(2, '0')}
+                <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+                    {/* Number Badge */}
+                    <div className="shrink-0">
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-foreground text-background flex items-center justify-center font-serif text-lg md:text-xl font-medium shadow-md">
+                            {String(phase.id).padStart(2, '0')}
+                        </div>
                     </div>
-                    <div>
-                        <span className="text-xs text-muted font-medium">{phase.duration}</span>
-                        <h4 className="font-serif text-xl md:text-2xl text-foreground">
-                            {phase.title}
-                        </h4>
-                    </div>
-                </div>
 
-                {/* Description */}
-                <p className="text-muted leading-relaxed mb-6 pl-0 md:pl-20">
-                    {phase.description}
-                </p>
-
-                {/* Deliverables */}
-                <div className="pl-0 md:pl-20">
-                    <span className="label block mb-3">Deliverables</span>
-                    <div className="flex flex-wrap gap-2">
-                        {phase.deliverables.map((item) => (
-                            <span
-                                key={item}
-                                className="flex items-center gap-1.5 text-sm text-foreground bg-background border border-border px-3 py-1.5 rounded-full"
-                            >
-                                <CheckCircle2 size={12} className="text-accent-jewel" />
-                                {item}
+                    {/* Content */}
+                    <div className="flex-1">
+                        <div className="flex flex-col md:flex-row md:items-baseline justify-between gap-2 mb-3">
+                            <h4 className="font-serif text-xl md:text-2xl text-foreground order-2 md:order-1">
+                                {phase.title}
+                            </h4>
+                            <span className="text-xs md:text-sm text-muted font-medium uppercase tracking-wider order-1 md:order-2 border border-border px-2 py-1 rounded w-fit">
+                                {phase.duration}
                             </span>
-                        ))}
+                        </div>
+
+                        <p className="text-muted leading-relaxed mb-6 max-w-2xl">
+                            {phase.description}
+                        </p>
+
+                        {/* Deliverables */}
+                        <div>
+                            <span className="label block mb-3 opacity-70">Deliverables</span>
+                            <div className="flex flex-wrap gap-2">
+                                {phase.deliverables.map((item) => (
+                                    <span
+                                        key={item}
+                                        className="inline-flex items-center gap-1.5 text-xs md:text-sm text-foreground bg-surface-elevated border border-border px-3 py-1.5 rounded-full"
+                                    >
+                                        <CheckCircle2 size={12} className="text-accent-jewel" />
+                                        {item}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </motion.div>
+            </div>
         </motion.div>
     )
 }
@@ -136,62 +137,87 @@ export default function Process() {
     const sectionRef = useRef<HTMLElement>(null)
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
-    const prefersReducedMotion = useReducedMotion()
 
     return (
-        <section id="process" ref={sectionRef} className="bg-background scroll-mt-32">
+        <section
+            id="process"
+            ref={sectionRef}
+            className="bg-background relative"
+            style={{
+                // CSS Variables for Responsive Tuning
+                '--stack-offset': '120px', // Default (Desktop)
+                '--card-margin': '4rem',     // Default (Desktop)
+            } as any}
+        >
+            <style jsx global>{`
+                @media (max-width: 768px) {
+                    #process {
+                        --stack-offset: 100px !important;
+                        --card-margin: 2rem !important;
+                    }
+                }
+            `}</style>
 
-            {/* Section Header - Static */}
-            <div
-                ref={headerRef}
-                className="text-center pt-20 md:pt-24 pb-12 border-b border-border"
-            >
-                <motion.h2
-                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4 flex items-baseline justify-center gap-3 flex-wrap"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.1, duration: 0.8 }}
+            <div className="container-editorial">
+                {/* Section Header */}
+                <div
+                    ref={headerRef}
+                    className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border mb-16 md:mb-24"
                 >
-                    <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Build</span> Sprint
-                </motion.h2>
-                <motion.p
-                    className="text-lg md:text-xl text-muted max-w-2xl mx-auto mb-6"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.3 }}
-                >
-                    A proven 12-week engagement framework. From discovery to production,
-                    with complete transparency at every phase.
-                </motion.p>
-            </div>
-
-            {/* Timeline */}
-            <div className="container-editorial pt-12 pb-16 md:pb-32">
-                <div className="max-w-4xl mx-auto relative">
-                    {phases.map((phase, i) => (
-                        <PhaseCard key={phase.id} phase={phase} index={i} />
-                    ))}
+                    <motion.h2
+                        className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 flex items-baseline justify-center gap-3 flex-wrap"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.1, duration: 0.8 }}
+                    >
+                        <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Build</span> Sprint
+                    </motion.h2>
+                    <motion.p
+                        className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.3 }}
+                    >
+                        A proven 12-week engagement framework. From discovery to production,
+                        with complete transparency at every phase.
+                    </motion.p>
                 </div>
 
-                {/* CTA */}
+                {/* Stacking Cards Container */}
+                <div className="max-w-4xl mx-auto relative content-visibility-auto">
+                    {/* 
+                        No bottom padding needed now because the last card flows naturally
+                    */}
+                    <div className="flex flex-col relative w-full">
+                        {phases.map((phase, i) => (
+                            <PhaseCard
+                                key={phase.id}
+                                phase={phase}
+                                index={i}
+                                total={phases.length}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                {/* CTA - Appears after the stack */}
                 <motion.div
-                    className="text-center mt-16"
+                    className="text-center mt-20 relative z-20"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.3 }}
+                    transition={{ delay: 0.2 }}
                 >
                     <a
                         href="https://calendly.com/gritlabsinit"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-secondary inline-flex"
+                        className="btn-secondary inline-flex text-lg px-8 py-4"
                     >
-                        Start Your Sprint <ArrowRight size={16} />
+                        Start Your Sprint <ArrowRight size={20} className="ml-2" />
                     </a>
                 </motion.div>
             </div>
-
-        </section >
+        </section>
     )
 }

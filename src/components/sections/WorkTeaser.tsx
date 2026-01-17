@@ -159,10 +159,10 @@ export default function WorkTeaser() {
 
             <div
                 ref={headerRef}
-                className="text-center py-20 md:py-32 border-b border-border"
+                className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border"
             >
                 <motion.h2
-                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"
+                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.1, duration: 0.8 }}

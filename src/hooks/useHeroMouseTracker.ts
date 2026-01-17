@@ -125,7 +125,6 @@ export function useHeroMouseTracker(containerRef: RefObject<HTMLElement | null>)
                     }
                     return newState
                 })
-                e.preventDefault()
             }
         }
 
@@ -141,7 +140,7 @@ export function useHeroMouseTracker(containerRef: RefObject<HTMLElement | null>)
             }
         }
 
-        container.addEventListener('touchstart', handleTouchStart, { passive: false })
+        container.addEventListener('touchstart', handleTouchStart, { passive: true })
         container.addEventListener('touchmove', handleTouchMove, { passive: true })
 
         return () => {
