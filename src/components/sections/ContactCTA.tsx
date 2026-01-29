@@ -1,8 +1,9 @@
 "use client"
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Mail, Calendar, MessageCircle } from 'lucide-react'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 const contactOptions = [
     {
@@ -31,24 +32,47 @@ const contactOptions = [
     }
 ]
 
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+
 export default function ContactCTA() {
-    const sectionRef = useRef<HTMLElement>(null)
+    // sectionRef for scroll progress (animation)
+    const scrollRef = useRef<HTMLElement>(null)
+    // viewRef for navigation tracking
+    const viewRef = useSectionInView('contact')
+
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
     const prefersReducedMotion = useReducedMotion()
 
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
+
+    // Normalized start point (0 to 1)
+    const startPoint = SECTION_FRAME_MAP.contact.start / TOTAL_FRAMES
+
+    // Fade in and stay visible
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [startPoint - 0.02, startPoint],
+        [0, 1]
+    )
+
     const { scrollYProgress } = useScroll({
-        target: sectionRef,
+        target: scrollRef,
         offset: ["start end", "end end"]
     })
 
     const backgroundOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 0.06])
 
     return (
-        <section
+        <motion.section
             id="contact"
-            ref={sectionRef}
-            className="bg-background scroll-mt-32 relative overflow-hidden"
+            ref={(el) => {
+                if (scrollRef) (scrollRef as React.MutableRefObject<HTMLElement | null>).current = el
+                if (viewRef) (viewRef as React.MutableRefObject<HTMLElement | null>).current = el
+            }}
+            className="editorial-section scroll-mt-32 relative overflow-hidden"
+            style={{ opacity: sectionOpacity }}
         >
             {/* Background Pattern */}
             <motion.div
@@ -66,76 +90,49 @@ export default function ContactCTA() {
                 />
             </motion.div>
 
-            {/* Section Header */}
-            <div
-                ref={headerRef}
-                className="relative z-10 text-center pt-12 md:pt-20 pb-12 md:pb-16 border-b border-border"
-            >
-                <motion.h2
-                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-4"
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.1, duration: 0.8 }}
-                >
-                    Ready to Build?
-                </motion.h2>
-                <motion.p
-                    className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.3 }}
-                >
-                    Let's discuss how we can bring your vision to production.
-                    Our team is ready to scope your next project.
-                </motion.p>
-            </div>
+            {/* Centered Content Container */}
+            <div className="relative z-10 w-full h-full min-h-[60vh] flex flex-col items-center justify-center gap-8">
 
-            {/* Contact Options */}
-            <div className="relative z-10 container-editorial py-16 md:py-24">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-                    {contactOptions.map((option, i) => (
-                        <motion.a
-                            key={option.title}
-                            href={option.action}
-                            target={option.external ? "_blank" : undefined}
-                            rel={option.external ? "noopener noreferrer" : undefined}
-                            className="panel panel-hover p-6 text-center group"
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                        >
-                            <div className="w-12 h-12 rounded-full bg-background border border-border flex items-center justify-center mx-auto mb-4 group-hover:border-foreground transition-colors">
-                                <option.icon size={20} className="text-accent-jewel" />
-                            </div>
-                            <h4 className="font-serif text-lg text-foreground mb-1">{option.title}</h4>
-                            <p className="text-sm text-muted mb-4">{option.description}</p>
-                            <span className="text-sm text-accent-jewel group-hover:text-accent-hover flex items-center justify-center gap-1 transition-colors">
-                                {option.actionLabel} <ArrowRight size={14} />
-                            </span>
-                        </motion.a>
-                    ))}
+                {/* Section Header */}
+                <div
+                    ref={headerRef}
+                    className="text-center"
+                >
+                    <motion.div
+                        className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : {}}
+                        transition={{ delay: 0.1, duration: 0.8 }}
+                    >
+                        <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-4">
+                            Ready to Build?
+                        </h2>
+                        <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                            Let's discuss how we can bring your vision to production.
+                            Our team is ready to scope your next project.
+                        </p>
+                    </motion.div>
                 </div>
 
                 {/* Primary CTA */}
                 <motion.div
-                    className="text-center mt-16"
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.4 }}
+                    transition={{ delay: 0.2 }}
                 >
                     <a
                         href="https://calendly.com/gritlabsinit"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-primary inline-flex text-base px-8 py-4"
+                        className="btn-primary inline-flex text-base px-8 py-4 "
                     >
                         Start Your Build Sprint <ArrowRight size={18} />
                     </a>
                 </motion.div>
+
             </div>
 
-        </section>
+        </motion.section>
     )
 }

@@ -1,10 +1,11 @@
 "use client"
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, ExternalLink } from 'lucide-react'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 // Placeholder case studies - ready for asset replacement
 const caseStudies = [
@@ -43,151 +44,128 @@ const caseStudies = [
 interface CaseStudyCardProps {
     study: typeof caseStudies[0]
     index: number
-    featured?: boolean
 }
 
-function CaseStudyCard({ study, index, featured }: CaseStudyCardProps) {
+function CaseStudyCard({ study, index }: CaseStudyCardProps) {
     const ref = useRef<HTMLDivElement>(null)
     const isInView = useInView(ref, { once: true, margin: "-50px" })
-
-    if (featured) {
-        return (
-            <motion.div
-                ref={ref}
-                className="panel p-8 md:p-12 texture-grain col-span-full"
-                initial={{ opacity: 0, y: 40 }}
-                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                    {/* Left: Placeholder Image */}
-                    <div className="aspect-[4/3] bg-background border border-border rounded-lg flex items-center justify-center">
-                        {study.image ? (
-                            <Image
-                                src={study.image}
-                                alt={study.title}
-                                fill
-                                className="object-cover rounded-lg"
-                            />
-                        ) : (
-                            <div className="text-center text-muted">
-                                <div className="text-4xl mb-2">📸</div>
-                                <span className="text-sm">Case Study Image</span>
-                                <span className="block text-xs opacity-50">[ PLACEHOLDER ]</span>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Right: Content */}
-                    <div>
-                        <div className="flex items-center gap-3 mb-4">
-                            <span className="label">{study.category}</span>
-                        </div>
-                        <h3 className="font-serif text-2xl md:text-3xl text-foreground mb-2">
-                            {study.title}
-                        </h3>
-                        <p className="text-muted mb-6">{study.description}</p>
-
-                        {/* Metrics */}
-                        <div className="flex flex-wrap gap-3 mb-6">
-                            {study.metrics.map((metric) => (
-                                <span
-                                    key={metric}
-                                    className="text-sm px-3 py-1.5 bg-background border border-border rounded-full text-foreground"
-                                >
-                                    {metric}
-                                </span>
-                            ))}
-                        </div>
-
-                        <Link
-                            href={`/work/${study.id}`}
-                            className="inline-flex items-center gap-2 text-sm text-accent-jewel hover:text-accent-hover transition-colors"
-                        >
-                            View Case Study <ExternalLink size={14} />
-                        </Link>
-                    </div>
-                </div>
-            </motion.div>
-        )
-    }
 
     return (
         <motion.div
             ref={ref}
-            className="panel panel-hover p-6 flex flex-col"
+            className="group relative bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: index * 0.1 }}
         >
-            {/* Placeholder Image */}
-            <div className="aspect-[3/2] bg-background border border-border rounded-lg mb-4 flex items-center justify-center">
+            {/* Image Container */}
+            <div className="aspect-video relative mb-6 rounded-lg overflow-hidden bg-black/50 border border-white/10">
                 {study.image ? (
                     <Image
                         src={study.image}
                         alt={study.title}
                         fill
-                        className="object-cover rounded-lg"
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="text-center text-muted">
+                    <div className="flex items-center justify-center w-full h-full text-white/20">
                         <span className="text-2xl">📸</span>
-                        <span className="block text-xs opacity-50 mt-1">[ PLACEHOLDER ]</span>
                     </div>
                 )}
+
+                {/* Category Badge - Floating */}
+                <div className="absolute top-3 left-3">
+                    <span className="px-3 py-1 text-[10px] font-medium tracking-wider uppercase text-white/90 bg-black/60 backdrop-blur-md rounded-full border border-white/10">
+                        {study.category}
+                    </span>
+                </div>
             </div>
 
-            <div className="flex items-center gap-3 mb-2">
-                <span className="label">{study.category}</span>
+            {/* Content */}
+            <div className="p-6 flex flex-col flex-grow">
+                <h3 className="font-serif text-2xl text-foreground mb-3 group-hover:text-accent-jewel transition-colors">
+                    {study.title}
+                </h3>
+
+                <p className="text-sm text-muted mb-6 flex-grow leading-relaxed">
+                    {study.description}
+                </p>
+
+                {/* Metrics - Compact */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                    {study.metrics.slice(0, 2).map((metric) => (
+                        <span
+                            key={metric}
+                            className="text-[10px] px-2 py-1 bg-gray-100 rounded text-muted-foreground font-medium"
+                        >
+                            {metric}
+                        </span>
+                    ))}
+                </div>
+
+                {/* Link */}
+                <Link
+                    href={`/work/${study.id}`}
+                    className="inline-flex items-center gap-2 text-sm text-accent-jewel hover:text-accent-hover transition-colors font-medium mt-auto"
+                >
+                    Read Case Study <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                </Link>
             </div>
-
-            <h4 className="font-serif text-lg text-foreground mb-2">
-                {study.title}
-            </h4>
-
-            <p className="text-sm text-muted flex-grow">{study.description}</p>
         </motion.div>
     )
 }
 
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+
 export default function WorkTeaser() {
+    const sectionRef = useSectionInView('work')
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
 
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
+
+    // Normalized start/end points (0 to 1)
+    const startPoint = SECTION_FRAME_MAP.work.start / TOTAL_FRAMES
+    const endPoint = SECTION_FRAME_MAP.work.end / TOTAL_FRAMES
+
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
+        [0, 1, 1, 0]
+    )
+
     return (
-        <section id="work" className="bg-background scroll-mt-32">
+        <motion.section
+            ref={sectionRef}
+            className="editorial-section scroll-mt-32"
+            style={{ opacity: sectionOpacity }}
+        >
 
             <div
                 ref={headerRef}
-                className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border"
+                className="text-center pt-20 md:pt-32 pb-12 md:pb-16 flex justify-center"
             >
-                <motion.h2
-                    className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6"
+                <motion.div
+                    className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.1, duration: 0.8 }}
                 >
-                    Proof of Execution
-                </motion.h2>
-                <motion.p
-                    className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.3 }}
-                >
-                    Selected work from our portfolio. Real results for real enterprises.
-                </motion.p>
+                    <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-6">
+                        Proof of Execution
+                    </h2>
+                    <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                        Selected work from our portfolio. Real results for real enterprises.
+                    </p>
+                </motion.div>
             </div>
 
-            {/* Case Studies Grid */}
-            <div className="container-editorial py-16 md:py-24">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Featured Case Study */}
-                    <CaseStudyCard study={caseStudies[0]} index={0} featured />
-
-                    {/* Other Case Studies */}
-                    {caseStudies.slice(1).map((study, i) => (
-                        <CaseStudyCard key={study.id} study={study} index={i + 1} />
+            {/* Case Studies Grid - Redesigned */}
+            <div className="container-editorial pb-24">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {caseStudies.map((study, i) => (
+                        <CaseStudyCard key={study.id} study={study} index={i} />
                     ))}
                 </div>
 
@@ -207,6 +185,6 @@ export default function WorkTeaser() {
                 </motion.div>
             </div>
 
-        </section>
+        </motion.section>
     )
 }

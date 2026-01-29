@@ -1,12 +1,13 @@
 "use client"
 
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { useRef, useEffect, useState } from 'react'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import {
     Coins, Network, Link, Globe, CreditCard, Layers,
     Bot, BarChart, Mic, Eye, Database, ShieldCheck
 } from 'lucide-react'
 import LottieIcon from '@/components/ui/LottieIcon'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 // Blockchain capabilities
 const blockchainCapabilities = [
@@ -186,10 +187,12 @@ function CapabilitySection({ title, capabilities, reverse, className }: Capabili
                 animate={isInView ? { opacity: 1, x: 0 } : {}}
                 transition={{ duration: 0.6, ease: "easeOut" }}
             >
-                <div className={`h-px bg-border flex-grow max-w-[100px] ${reverse ? 'order-last' : ''}`} />
-                <h3 className="font-serif text-2xl md:text-3xl text-foreground">
-                    {title}
-                </h3>
+                <div className={`h-px bg-white/30 flex-grow max-w-[100px] ${reverse ? 'order-last' : ''}`} />
+                <div className="glass-panel-dark px-6 py-3">
+                    <h3 className="font-serif text-2xl md:text-3xl text-white">
+                        {title}
+                    </h3>
+                </div>
             </motion.div>
 
             {/* Cards Grid with staggered animation */}
@@ -202,32 +205,49 @@ function CapabilitySection({ title, capabilities, reverse, className }: Capabili
     )
 }
 
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+
 export default function Services() {
-    const sectionRef = useRef<HTMLElement>(null)
+    const sectionRef = useSectionInView('services')
     const headerRef = useRef<HTMLDivElement>(null)
     const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" })
 
+    // Strict visibility control
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
+
+    // Normalized start/end points (0 to 1)
+    const startPoint = SECTION_FRAME_MAP.services.start / TOTAL_FRAMES
+    const endPoint = SECTION_FRAME_MAP.services.end / TOTAL_FRAMES
+
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
+        [0, 1, 1, 0]
+    )
+
     return (
-        <section ref={sectionRef} id="services" className="bg-background">
+        <motion.section
+            ref={sectionRef}
+            className="editorial-section"
+            style={{ opacity: sectionOpacity }}
+        >
             <div className="container-editorial">
                 {/* Main Section Header */}
-                <div ref={headerRef} className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border">
-                    <motion.h2
-                        className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 flex items-baseline justify-center gap-3 flex-wrap"
+                <div ref={headerRef} className="text-center pt-20 md:pt-32 pb-12 md:pb-16 flex justify-center">
+                    <motion.div
+                        className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
                         initial={{ opacity: 0, y: 30 }}
                         animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Full Spectrum</span> Engineering
-                    </motion.h2>
-                    <motion.p
-                        className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isHeaderInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                    >
-                        End-to-end solutions across blockchain infrastructure and artificial intelligence.
-                    </motion.p>
+                        <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-6 flex items-baseline justify-center gap-3 flex-wrap">
+                            <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-warm">Full Spectrum</span> Engineering
+                        </h2>
+                        <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                            End-to-end solutions across blockchain infrastructure and artificial intelligence.
+                        </p>
+                    </motion.div>
                 </div>
 
                 {/* Blockchain Section */}
@@ -252,6 +272,6 @@ export default function Services() {
                     reverse
                 />
             </div>
-        </section>
+        </motion.section>
     )
 }

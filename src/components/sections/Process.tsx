@@ -1,8 +1,9 @@
 "use client"
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { CheckCircle2, ArrowRight } from 'lucide-react'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 interface Phase {
     id: number
@@ -133,17 +134,33 @@ function PhaseCard({ phase, index, total }: { phase: Phase; index: number; total
     )
 }
 
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+
 export default function Process() {
-    const sectionRef = useRef<HTMLElement>(null)
+    const sectionRef = useSectionInView('process')
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
 
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
+
+    // Normalized start/end points (0 to 1)
+    const startPoint = SECTION_FRAME_MAP.process.start / TOTAL_FRAMES
+    const endPoint = SECTION_FRAME_MAP.process.end / TOTAL_FRAMES
+
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
+        [0, 1, 1, 0]
+    )
+
     return (
-        <section
+        <motion.section
             id="process"
             ref={sectionRef}
-            className="bg-background relative"
+            className="editorial-section relative"
             style={{
+                opacity: sectionOpacity,
                 // CSS Variables for Responsive Tuning
                 '--stack-offset': '120px', // Default (Desktop)
                 '--card-margin': '4rem',     // Default (Desktop)
@@ -162,29 +179,26 @@ export default function Process() {
                 {/* Section Header */}
                 <div
                     ref={headerRef}
-                    className="text-center pt-20 md:pt-32 pb-12 md:pb-16 border-b border-border mb-16 md:mb-24"
+                    className="text-center pt-20 md:pt-32 pb-12 md:pb-16 mb-16 md:mb-24 flex justify-center"
                 >
-                    <motion.h2
-                        className="font-serif text-4xl md:text-6xl lg:text-7xl text-foreground mb-6 flex items-baseline justify-center gap-3 flex-wrap"
+                    <motion.div
+                        className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.1, duration: 0.8 }}
                     >
-                        <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-jewel">Build</span> Sprint
-                    </motion.h2>
-                    <motion.p
-                        className="text-lg md:text-xl text-muted max-w-2xl mx-auto"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : {}}
-                        transition={{ delay: 0.3 }}
-                    >
-                        A proven 12-week engagement framework. From discovery to production,
-                        with complete transparency at every phase.
-                    </motion.p>
+                        <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-6 flex items-baseline justify-center gap-3 flex-wrap">
+                            <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-warm">Build</span> Sprint
+                        </h2>
+                        <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
+                            A proven 12-week engagement framework. From discovery to production,
+                            with complete transparency at every phase.
+                        </p>
+                    </motion.div>
                 </div>
 
                 {/* Stacking Cards Container */}
-                <div className="max-w-4xl mx-auto relative content-visibility-auto">
+                <div className="max-w-4xl mx-auto relative">
                     {/* 
                         No bottom padding needed now because the last card flows naturally
                     */}
@@ -218,6 +232,6 @@ export default function Process() {
                     </a>
                 </motion.div>
             </div>
-        </section>
+        </motion.section>
     )
 }

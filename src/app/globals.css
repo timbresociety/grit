@@ -58,6 +58,7 @@
   --duration-fast: 150ms;
   --duration-normal: 300ms;
   --duration-slow: 500ms;
+
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -67,6 +68,15 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Scroll Physics */
+    --frames-per-vh: 100;
+  }
+
+  @media (max-width: 768px) {
+    html {
+      --frames-per-vh: 40;
+      /* Taller sections on mobile */
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -283,5 +293,109 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  /* Editorial Section - transparent for scroll background */
+  .editorial-section {
+    background: transparent;
+    position: relative;
+  }
+
+  /* Glass panel for overlay text on video background */
+  .glass-panel-dark {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+  }
+
+  .glass-panel-light {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: var(--radius-lg);
+  }
+
+  /* Section content overlay - ensures content is above background */
+  .section-overlay {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     LIQUID GLASS TEXT EFFECT
+     Creates a 3D frosted glass outline around text for visibility
+     ───────────────────────────────────────────────────────────────────────── */
+
+  /* Base liquid glass text - adds depth and glow */
+  .liquid-glass-text {
+    position: relative;
+    text-shadow:
+      /* Inner white highlight (top light) */
+      0 -1px 0 rgba(255, 255, 255, 0.4),
+      /* Outer glow */
+      0 0 20px rgba(255, 255, 255, 0.15),
+      0 0 40px rgba(255, 255, 255, 0.1),
+      /* Bottom shadow for 3D depth */
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Liquid glass text with frosted backdrop */
+  .liquid-glass-text-frosted {
+    position: relative;
+    text-shadow:
+      0 -1px 0 rgba(255, 255, 255, 0.5),
+      0 1px 2px rgba(0, 0, 0, 0.4),
+      0 0 30px rgba(255, 255, 255, 0.2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    /* Subtle white stroke outline */
+    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
+  }
+
+  /* Section header with glass backdrop */
+  .glass-section-header {
+    position: relative;
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0.1) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    box-shadow:
+      /* Inner highlight */
+      inset 0 1px 1px rgba(255, 255, 255, 0.2),
+      /* Outer glow */
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-section-header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Minimal glass outline - just subtle edge glow */
+  .glass-text-outline {
+    text-shadow:
+      /* White edge glow */
+      0 0 2px rgba(255, 255, 255, 0.8),
+      0 0 4px rgba(255, 255, 255, 0.4),
+      0 0 8px rgba(255, 255, 255, 0.2),
+      /* Dark shadow for depth */
+      0 2px 4px rgba(0, 0, 0, 0.5);
   }
 }

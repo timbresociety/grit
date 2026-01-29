@@ -1,0 +1,189 @@
+
+> grit@0.1.0 lint
+> eslint
+
+
+/Users/deepsheth/Documents/GitHub/grit/src/app/layout.tsx
+  5:8  warning  'ChapterNav' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/deepsheth/Documents/GitHub/grit/src/app/work/[slug]/page.tsx
+  1:10  warning  'notFound' is defined but never used      @typescript-eslint/no-unused-vars
+  7:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/3d/HeroScene.tsx
+  221:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  234:27  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/debug/DebugPanel.tsx
+  11:9  warning  'isMenuOpen' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  26:9  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/debug/DebugPanel.tsx:26:9
+  24 |
+  25 |     useEffect(() => {
+> 26 |         setMounted(true)
+     |         ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  27 |         const handleKeyDown = (e: KeyboardEvent) => {
+  28 |             if (e.key.toLowerCase() === 'd') {
+  29 |                 setIsVisible(prev => !prev)  react-hooks/set-state-in-effect
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/providers/MotionProvider.tsx
+  72:59  warning  The ref value 'rafId.current' will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by React, copy 'rafId.current' to a variable inside the effect, and use that variable in the cleanup function  react-hooks/exhaustive-deps
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/ContactCTA.tsx
+   46:9   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/ContactCTA.tsx:46:9
+  44 |
+  45 |     useEffect(() => {
+> 46 |         setWindowHeight(window.innerHeight)
+     |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |         const handleResize = () => setWindowHeight(window.innerHeight)
+  48 |         window.addEventListener('resize', handleResize)
+  49 |         return () => window.removeEventListener('resize', handleResize)  react-hooks/set-state-in-effect
+  107:28  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             react/no-unescaped-entities
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Hero.tsx
+   3:28  warning  'useCallback' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+  38:34  error    Error: This value cannot be modified
+
+Modifying a value returned from a hook is not allowed. Consider moving the modification into the hook where the value is constructed.
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Hero.tsx:38:34
+  36 |             ref={(el) => {
+  37 |                 // TypeScript workaround to assign to both refs
+> 38 |                 if (sectionRef) (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el
+     |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `sectionRef` cannot be modified
+  39 |                 if (containerRef) (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+  40 |             }}
+  41 |             className="editorial-section relative min-h-screen flex items-center overflow-hidden"
+
+Hint: If this value is a Ref (value returned by `useRef()`), rename the variable to end in "Ref"  react-hooks/immutability
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Logos.tsx
+  30:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Logos.tsx:30:9
+  28 |
+  29 |     useEffect(() => {
+> 30 |         setWindowHeight(window.innerHeight)
+     |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  31 |         const handleResize = () => setWindowHeight(window.innerHeight)
+  32 |         window.addEventListener('resize', handleResize)
+  33 |         return () => window.removeEventListener('resize', handleResize)  react-hooks/set-state-in-effect
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Process.tsx
+    4:54  warning  'useReducedMotion' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+   79:18  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+  147:9   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Process.tsx:147:9
+  145 |
+  146 |     useEffect(() => {
+> 147 |         setWindowHeight(window.innerHeight)
+      |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  148 |         const handleResize = () => setWindowHeight(window.innerHeight)
+  149 |         window.addEventListener('resize', handleResize)
+  150 |         return () => window.removeEventListener('resize', handleResize)  react-hooks/set-state-in-effect
+  173:18  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-explicit-any
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Services.tsx
+  218:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/Services.tsx:218:9
+  216 |
+  217 |     useEffect(() => {
+> 218 |         setWindowHeight(window.innerHeight)
+      |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  219 |         const handleResize = () => setWindowHeight(window.innerHeight)
+  220 |         window.addEventListener('resize', handleResize)
+  221 |         return () => window.removeEventListener('resize', handleResize)  react-hooks/set-state-in-effect
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/WorkTeaser.tsx
+  163:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/sections/WorkTeaser.tsx:163:9
+  161 |
+  162 |     useEffect(() => {
+> 163 |         setWindowHeight(window.innerHeight)
+      |         ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  164 |         const handleResize = () => setWindowHeight(window.innerHeight)
+  165 |         window.addEventListener('resize', handleResize)
+  166 |         return () => window.removeEventListener('resize', handleResize)  react-hooks/set-state-in-effect
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/ui/EditorialLayout.tsx
+  3:58  warning  'useCallback' is defined but never used  @typescript-eslint/no-unused-vars
+  4:10  warning  'useInView' is defined but never used    @typescript-eslint/no-unused-vars
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/ui/MenuOverlay.tsx
+  102:42  warning  'i' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/ui/ScrollVideoBackground.tsx
+   3:42  warning  'useState' is defined but never used                @typescript-eslint/no-unused-vars
+  76:9   error    'offsetX' is never reassigned. Use 'const' instead  prefer-const
+  77:9   error    'offsetY' is never reassigned. Use 'const' instead  prefer-const
+
+/Users/deepsheth/Documents/GitHub/grit/src/components/ui/SectionNav.tsx
+  3:10  warning  'useEffect' is defined but never used        @typescript-eslint/no-unused-vars
+  3:21  warning  'useState' is defined but never used         @typescript-eslint/no-unused-vars
+  4:18  warning  'AnimatePresence' is defined but never used  @typescript-eslint/no-unused-vars
+  5:10  warning  'useInView' is defined but never used        @typescript-eslint/no-unused-vars
+  6:10  warning  'useRef' is defined but never used           @typescript-eslint/no-unused-vars
+
+/Users/deepsheth/Documents/GitHub/grit/src/contexts/HeroLoadingContext.tsx
+   3:58  warning  'useCallback' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   @typescript-eslint/no-unused-vars
+  55:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/deepsheth/Documents/GitHub/grit/src/contexts/HeroLoadingContext.tsx:55:13
+  53 |
+  54 |         if (startTime === null) {
+> 55 |             setStartTime(performance.now())
+     |             ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  56 |         }
+  57 |
+  58 |         let animationId: number  react-hooks/set-state-in-effect
+
+✖ 32 problems (16 errors, 16 warnings)
+

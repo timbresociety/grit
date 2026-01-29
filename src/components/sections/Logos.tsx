@@ -1,8 +1,9 @@
 "use client"
 
-import { useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import Image from 'next/image'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 interface Logo {
     name: string
@@ -17,29 +18,51 @@ const logos: Logo[] = [
     // Duplicate for variety if needed, or just rely on track duplication
 ]
 
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+
 export default function Logos() {
+    const sectionRef = useSectionInView('logos')
     const containerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(containerRef, { once: true, margin: "-50px" })
+
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
+
+    // Normalized start/end points (0 to 1)
+    const startPoint = SECTION_FRAME_MAP.operator.start / TOTAL_FRAMES
+    const endPoint = SECTION_FRAME_MAP.operator.end / TOTAL_FRAMES
+
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
+        [0, 1, 1, 0]
+    )
 
     // Duplicate logos to create a seamless loop
     // We duplicate firmly enough to ensure the track is longer than any reasonable viewport
     const displayLogos = [...logos, ...logos, ...logos]
 
     return (
-        <section className="bg-background border-t border-b border-border overflow-hidden">
-            <div className="container-editorial">
+        <motion.section
+            ref={sectionRef}
+            className="editorial-section min-h-screen flex items-center overflow-hidden"
+            style={{ opacity: sectionOpacity }}
+        >
+            <div className="container-editorial w-full">
 
                 <motion.div
                     ref={containerRef}
-                    className="text-center pt-20 md:pt-32 pb-12 md:pb-16"
+                    className="text-center py-20 md:py-32"
                     initial={{ opacity: 0, y: 20 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.6 }}
                 >
-                    {/* Label */}
-                    <h3 className="font-serif text-3xl md:text-5xl lg:text-6xl text-foreground mb-12 flex items-baseline justify-center gap-2 flex-wrap">
-                        Built by <span className="font-imperial text-4xl md:text-6xl lg:text-7xl px-1 text-accent-jewel">Operators</span> From
-                    </h3>
+                    {/* Label - wrapped in glass panel */}
+                    <div className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block mb-12">
+                        <h3 className="font-serif text-3xl md:text-5xl lg:text-6xl text-white flex items-baseline justify-center gap-2 flex-wrap">
+                            Built by <span className="font-imperial text-4xl md:text-6xl lg:text-7xl px-1 text-accent-warm">Operators</span> From
+                        </h3>
+                    </div>
 
                     {/* Infinite Carousel Container */}
                     <div
@@ -68,37 +91,22 @@ export default function Logos() {
                                     duration: 30 // Reduced speed for elegance
                                 }}
                             >
-                                {logos.map((logo, i) => (
+                                {displayLogos.map((logo, i) => (
                                     <LogoItem key={`${logo.name}-${i}-1`} logo={logo} />
                                 ))}
                             </motion.div>
-
-                            {/* Track 2 (Duplicate for seamless loop) */}
+                            {/* Track 2 (Duplicate) for seamless loop */}
                             <motion.div
                                 className="flex items-center gap-12 md:gap-20 px-6 md:px-10"
                                 animate={{ x: ["0%", "-100%"] }}
                                 transition={{
                                     repeat: Infinity,
                                     ease: "linear",
-                                    duration: 30
+                                    duration: 30 // Must match above
                                 }}
                             >
-                                {logos.map((logo, i) => (
+                                {displayLogos.map((logo, i) => (
                                     <LogoItem key={`${logo.name}-${i}-2`} logo={logo} />
-                                ))}
-                            </motion.div>
-                            {/* Track 3 (Duplicate for safety on huge screens) */}
-                            <motion.div
-                                className="flex items-center gap-12 md:gap-20 px-6 md:px-10"
-                                animate={{ x: ["0%", "-100%"] }}
-                                transition={{
-                                    repeat: Infinity,
-                                    ease: "linear",
-                                    duration: 30
-                                }}
-                            >
-                                {logos.map((logo, i) => (
-                                    <LogoItem key={`${logo.name}-${i}-3`} logo={logo} />
                                 ))}
                             </motion.div>
                         </div>
@@ -107,14 +115,14 @@ export default function Logos() {
                 </motion.div>
 
             </div>
-        </section>
+        </motion.section>
     )
 }
 
 function LogoItem({ logo }: { logo: Logo }) {
     return (
         <div
-            className="relative h-10 md:h-12 w-32 md:w-40 opacity-40 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0 cursor-pointer"
+            className="relative h-10 md:h-12 w-32 md:w-40 opacity-80 hover:opacity-100 transition-all duration-300 brightness-0 invert drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] cursor-pointer mix-blend-screen"
         >
             <Image
                 src={logo.src}

@@ -1,30 +1,10 @@
 "use client"
 
-import { useRef, useState, useCallback, Suspense, ComponentType } from 'react'
+import { useRef, useState, useCallback, useEffect } from 'react'
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Clock, Shield, Sparkles } from 'lucide-react'
-import dynamic from 'next/dynamic'
-import { useHeroMouseTracker } from '@/hooks/useHeroMouseTracker'
-import { useHeroLoading } from '@/contexts/HeroLoadingContext'
-
-// HeroScene props type
-interface HeroSceneProps {
-    mouseRef: React.MutableRefObject<{ x: number; y: number }>
-    isHovering: boolean
-    loadingPhase?: number
-    loadingProgress?: number
-}
-
-// Lazy Load 3D Background Scene with proper typing
-const HeroScene = dynamic<HeroSceneProps>(
-    () => import('@/components/3d/HeroScene').then(mod => mod.default as ComponentType<HeroSceneProps>),
-    {
-        ssr: false,
-        loading: () => (
-            <div className="absolute inset-0 bg-black" />
-        )
-    }
-)
+import { useSectionInView } from '@/components/ui/EditorialLayout'
+import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 const highlights = [
     { icon: Clock, text: '8–12 week cycles' },
@@ -33,84 +13,77 @@ const highlights = [
 ]
 
 export default function Hero() {
-    const containerRef = useRef<HTMLDivElement>(null)
+    const sectionRef = useSectionInView('hero')
     const prefersReducedMotion = useReducedMotion()
+    const [isLoaded, setIsLoaded] = useState(false)
 
-    // Track if cursor is over a glass panel (text frame)
-    const [isOverPanel, setIsOverPanel] = useState(false)
+    // Simulate loading delay for fade-in effect
+    useEffect(() => {
+        const timer = setTimeout(() => setIsLoaded(true), 300)
+        return () => clearTimeout(timer)
+    }, [])
 
-    // Mouse tracker for reveal effect
-    const { mouseRef, isHovering } = useHeroMouseTracker(containerRef)
+    const [windowHeight, setWindowHeight] = useState(0)
 
-    // Loading state
-    const { phase, progress, isComplete } = useHeroLoading()
+    useEffect(() => {
+        const handleResize = () => setWindowHeight(window.innerHeight)
+        requestAnimationFrame(() => handleResize())
+        window.addEventListener('resize', handleResize)
+        return () => window.removeEventListener('resize', handleResize)
+    }, [])
 
-    // Reveal should be active only when hovering AND not over a panel
-    const isRevealActive = isHovering && !isOverPanel
+    // Strict Sync: Use Global Scroll Progress
+    const { scrollYProgress: globalScroll } = useScroll()
 
+    // Normalized start/end points (0 to 1)
+    const endPoint = SECTION_FRAME_MAP.hero.end / TOTAL_FRAMES
+
+    const sectionOpacity = useTransform(
+        globalScroll,
+        [0, endPoint - 0.05, endPoint], // Fade out in last 5% of duration
+        [1, 1, 0]
+    )
+
+    const containerRef = useRef<HTMLElement>(null)
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ["start start", "end start"]
     })
 
-    const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
     const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
     const contentY = useTransform(scrollYProgress, [0, 0.5], ["0%", "10%"])
 
-    // Panel hover handlers
-    const handlePanelEnter = useCallback(() => setIsOverPanel(true), [])
-    const handlePanelLeave = useCallback(() => setIsOverPanel(false), [])
-
-    // UI should only show after phase 3
-    const showUI = phase >= 3
-
     return (
-        <section
-            id="hero"
-            ref={containerRef}
-            className="relative min-h-screen flex items-center overflow-hidden bg-black"
-            style={{ cursor: isOverPanel ? 'auto' : 'none' }}
+        <motion.section
+            ref={(el) => {
+                // TypeScript workaround to assign to both refs
+                if (sectionRef) (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el
+                if (containerRef) (containerRef as React.MutableRefObject<HTMLElement | null>).current = el
+            }}
+            className="editorial-section relative min-h-screen flex items-center overflow-hidden"
+            style={{ opacity: sectionOpacity }}
         >
-            {/* WebGL Background with Reveal Effect */}
-            <motion.div
-                className="absolute inset-0 z-0"
-                style={{ y: prefersReducedMotion ? 0 : backgroundY }}
-            >
-                <HeroScene
-                    mouseRef={mouseRef}
-                    isHovering={isRevealActive}
-                    loadingPhase={phase}
-                    loadingProgress={progress}
-                />
-                {/* Bottom fade - only show after loading */}
-                {showUI && (
-                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none" />
-                )}
-            </motion.div>
-
-            {/* Main Content - Centered */}
-            <div className="relative z-10 container-editorial w-full pointer-events-none">
+            {/* Main Content - Centered, overlays the scroll background */}
+            <div className="relative z-10 container-editorial w-full">
                 <div className="flex flex-col items-center justify-center min-h-screen py-24">
 
                     {/* Copy & CTA */}
                     <motion.div
-                        className="max-w-2xl pointer-events-auto text-center"
+                        className="max-w-2xl text-center"
                         style={{
                             opacity: prefersReducedMotion ? 1 : contentOpacity,
                             y: prefersReducedMotion ? 0 : contentY
                         }}
                     >
-                        {/* Main Headline - Glass panel with hover detection */}
+                        {/* Main Headline - Glass panel */}
                         <motion.div
-                            className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 md:p-8 mb-6 border border-white/40 shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
+                            className="glass-panel-dark p-6 md:p-8 mb-6"
                             initial={{ opacity: 0, y: 30 }}
-                            animate={showUI ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                            animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                            onMouseEnter={handlePanelEnter}
-                            onMouseLeave={handlePanelLeave}
                         >
                             <h1
-                                className="text-black"
+                                className="text-white"
                                 style={{
                                     letterSpacing: '-0.02em'
                                 }}
@@ -120,21 +93,19 @@ export default function Hero() {
                             </h1>
                         </motion.div>
 
-                        {/* Glass Panel for subhead, buttons, highlights - with hover detection */}
+                        {/* Glass Panel for subhead, buttons, highlights */}
                         <motion.div
-                            className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.06)]"
+                            className="glass-panel-dark p-6"
                             initial={{ opacity: 0, y: 20 }}
-                            animate={showUI ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+                            animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
                             transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                            onMouseEnter={handlePanelEnter}
-                            onMouseLeave={handlePanelLeave}
                         >
                             {/* Subhead */}
-                            <p className="text-base md:text-lg text-neutral-800 max-w-xl leading-relaxed mb-6">
+                            <p className="text-base md:text-lg text-white/80 max-w-xl leading-relaxed mb-6">
                                 We build bespoke AI and Blockchain software for teams that think long term.
                                 <span
-                                    className="font-medium block mt-2"
-                                    style={{ fontFamily: 'var(--font-serif)', color: '#1A1A1A' }}
+                                    className="font-medium block mt-2 text-white text-xl md:text-2xl"
+                                    style={{ fontFamily: 'var(--font-serif)' }}
                                 > Enterprise grade. Operator led.</span>
                             </p>
 
@@ -149,7 +120,7 @@ export default function Hero() {
                                     Book a Build Sprint <ArrowRight size={16} />
                                 </a>
                                 <a
-                                    href="#services-blockchain"
+                                    href="#services"
                                     className="btn-secondary"
                                 >
                                     Explore Capabilities
@@ -157,13 +128,13 @@ export default function Hero() {
                             </div>
 
                             {/* Highlights */}
-                            <div className="flex flex-wrap justify-center gap-4 pt-4 border-t border-neutral-300/50">
+                            <div className="flex flex-wrap justify-center gap-4 pt-4 border-t border-white/20">
                                 {highlights.map(({ icon: Icon, text }) => (
                                     <div
                                         key={text}
-                                        className="flex items-center gap-2 text-sm text-neutral-700"
+                                        className="flex items-center gap-2 text-sm text-white/70"
                                     >
-                                        <Icon size={14} className="text-neutral-800" />
+                                        <Icon size={14} className="text-white/60" />
                                         <span>{text}</span>
                                     </div>
                                 ))}
@@ -174,12 +145,7 @@ export default function Hero() {
                 </div>
             </div>
 
-            {/* Bottom Gradient Fade - only show after loading */}
-            {
-                showUI && (
-                    <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-20 pointer-events-none" />
-                )
-            }
-        </section >
+
+        </motion.section>
     )
 }
