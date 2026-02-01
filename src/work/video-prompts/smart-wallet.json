@@ -1,0 +1,115 @@
+{
+  "source_file": "smart-wallet.mdx",
+  "user_intent": "Smart wallet with passwordless authentication visualized as Renaissance-era automated key and lock mechanism",
+  "meta": {
+    "aspect_ratio": "4:3",
+    "quality": "ultra_photorealistic",
+    "steps": 55,
+    "guidance_scale": 8.0
+  },
+  "subject": [
+    {
+      "id": "authentication_mechanism",
+      "type": "object",
+      "description": "Elegant mechanical seal or signet system that authenticates through personal mark rather than complex keys, shown with internal clockwork mechanism in cross-section",
+      "position": "left"
+    },
+    {
+      "id": "smart_vault",
+      "type": "object",
+      "description": "Ornate but accessible treasure chest with intelligent lock mechanism that opens automatically for authorized users, detailed mechanical innards visible",
+      "position": "right"
+    },
+    {
+      "id": "hidden_machinery",
+      "type": "object",
+      "description": "Beneath the elegant surface, complex gear trains and counterweights that handle all the mechanical complexity invisibly - the user only touches the simple interface above",
+      "position": "background"
+    }
+  ],
+  "scene": {
+    "location": "Warm cream-colored aged parchment with elegant margins, suggesting a craftsman's workshop notebook",
+    "time": "golden_hour",
+    "weather": "clear_skies",
+    "lighting": {
+      "type": "natural_sunlight",
+      "direction": "front_lit"
+    },
+    "background_elements": [
+      "exploded view diagrams of lock mechanisms",
+      "elegant calligraphic labels",
+      "proportion guidelines"
+    ]
+  },
+  "technical": {
+    "lens": "50mm",
+    "aperture": "f/4"
+  },
+  "composition": {
+    "framing": "medium_shot",
+    "angle": "eye_level",
+    "focus_point": "whole_scene"
+  },
+  "style_modifiers": {
+    "medium": "pencil_sketch",
+    "aesthetic": ["baroque", "minimalist"],
+    "artist_reference": ["Leonardo da Vinci mechanical studies", "Renaissance locksmith technical drawings", "Automaton design manuscripts"]
+  },
+  "advanced": {
+    "negative_prompt": [
+      "digital",
+      "futuristic",
+      "neon",
+      "smartphone",
+      "email",
+      "modern",
+      "electronic",
+      "screens",
+      "cyberpunk",
+      "bright colors"
+    ],
+    "hdr_mode": false
+  },
+  "video_prompt": {
+    "duration_seconds": 8,
+    "narrative_concept": "A complex mechanical vault recognizes its owner and opens itself through hidden intelligent machinery",
+    "scenes": [
+      {
+        "timestamp": "0-2s",
+        "description": "An ornate brass and iron vault door with visible heavy locks, chains, and a complex keyhole mechanism, appearing impenetrable",
+        "motion": "Camera slowly approaches the imposing door, slight atmospheric haze",
+        "focal_point": "The intricate lock mechanisms suggesting complexity"
+      },
+      {
+        "timestamp": "2-5s",
+        "description": "A hand wearing a signet ring approaches and simply touches the vault surface - hidden gears within the walls begin turning, chains retract automatically, locks disengage in sequence",
+        "motion": "Chain of reactions ripples through the mechanism, gears mesh and spin within cross-section view of wall",
+        "focal_point": "The cascading mechanical response to the simple touch"
+      },
+      {
+        "timestamp": "5-8s",
+        "description": "The massive vault door swings open silently and effortlessly, revealing organized treasury contents within, warm light spilling out",
+        "motion": "Door pivots smoothly, camera pushes in slightly toward the opening",
+        "focal_point": "The contrast between complex mechanism and effortless access"
+      }
+    ],
+    "environment": {
+      "setting": "Renaissance banking house vault room with stone walls and iron fixtures",
+      "lighting": "Candlelight from wall sconces, warm flickering, dramatic shadows",
+      "mood": "Secure yet accessible, intelligent, trustworthy",
+      "atmosphere": "Slight dust particles in candlelight, aged patina on metal"
+    },
+    "style": {
+      "medium": "Animated technical illustration with cross-section cutaway views",
+      "aesthetic": ["mechanical engineering drawing", "baroque security", "renaissance vault"],
+      "color_palette": "Iron grey, brass gold, warm candlelight amber, deep shadows",
+      "texture": "Brushed metal, stone grain, wax seal impressions"
+    },
+    "motion_language": {
+      "camera_movement": "Approach then hold during mechanism reveal, gentle push-in at end",
+      "subject_animation": "Sequential lock disengagement, smooth gear rotation, door swing",
+      "transition_style": "Continuous shot with brief cutaway to internal mechanism cross-section"
+    },
+    "negative_elements": ["fingerprint scanners", "digital keypads", "screens", "lasers", "modern security"]
+  }
+}

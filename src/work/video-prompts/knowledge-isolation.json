@@ -1,0 +1,114 @@
+{
+  "source_file": "knowledge-isolation.mdx",
+  "user_intent": "Multi-tenant data isolation architecture visualized as Renaissance fortress and vault system technical illustration",
+  "meta": {
+    "aspect_ratio": "4:3",
+    "quality": "ultra_photorealistic",
+    "steps": 55,
+    "guidance_scale": 8.0
+  },
+  "subject": [
+    {
+      "id": "isolated_vaults",
+      "type": "object",
+      "description": "Three separate fortified vault structures drawn in architectural cross-section, each completely isolated with thick walls, moats, and independent foundations - no passages connecting them",
+      "position": "center"
+    },
+    {
+      "id": "gatehouse",
+      "type": "object",
+      "description": "Central fortified gatehouse with drawbridge mechanism that can only connect to one vault at a time, shown with detailed mechanical workings",
+      "position": "foreground"
+    },
+    {
+      "id": "defensive_elements",
+      "type": "object",
+      "description": "Renaissance military engineering elements - bastions, curtain walls, and defensive ditches rendered in precise technical drawing style",
+      "position": "background"
+    }
+  ],
+  "scene": {
+    "location": "Aged vellum manuscript page with architectural grid and construction geometry visible beneath the drawing",
+    "time": "golden_hour",
+    "weather": "clear_skies",
+    "lighting": {
+      "type": "natural_sunlight",
+      "direction": "front_lit"
+    },
+    "background_elements": [
+      "scale bars and measurement notations",
+      "section cut indicators",
+      "cardinal direction compass"
+    ]
+  },
+  "technical": {
+    "lens": "35mm",
+    "aperture": "f/5.6"
+  },
+  "composition": {
+    "framing": "wide_shot",
+    "angle": "bird_eye_view",
+    "focus_point": "whole_scene"
+  },
+  "style_modifiers": {
+    "medium": "ink_drawing",
+    "aesthetic": ["baroque"],
+    "artist_reference": ["Sebastien Le Prestre de Vauban fortification plans", "Leonardo da Vinci military engineering", "Renaissance citadel blueprints"]
+  },
+  "advanced": {
+    "negative_prompt": [
+      "digital",
+      "futuristic",
+      "neon",
+      "glowing",
+      "modern",
+      "crystalline",
+      "sci-fi",
+      "cyberpunk",
+      "bright colors"
+    ],
+    "hdr_mode": false
+  },
+  "video_prompt": {
+    "duration_seconds": 8,
+    "narrative_concept": "Three independent fortified vaults stand on separate foundations with no connecting passages, demonstrating architectural impossibility of breach",
+    "scenes": [
+      {
+        "timestamp": "0-2s",
+        "description": "Bird's eye view descends toward a fortress complex showing three distinct fortified structures, each surrounded by its own moat, no bridges between them",
+        "motion": "Camera descends slowly, revealing the complete separation",
+        "focal_point": "The visible gaps and moats ensuring no connection"
+      },
+      {
+        "timestamp": "2-5s",
+        "description": "Cross-section view revealing each vault has independent foundations going deep into bedrock, separate water sources, self-contained supply systems - no underground tunnels connect them",
+        "motion": "Camera moves through cutaway view showing depth of isolation",
+        "focal_point": "The underground separation - foundations not touching"
+      },
+      {
+        "timestamp": "5-8s",
+        "description": "Return to surface view showing the central gatehouse that controls access, each vault door opening only to verified visitors through separate drawbridges",
+        "motion": "Three drawbridges lower independently to three different authorized visitors",
+        "focal_point": "Controlled, verified, independent access paths"
+      }
+    ],
+    "environment": {
+      "setting": "Vauban-style star fortress complex in cleared landscape",
+      "lighting": "Overcast diffuse light emphasizing architectural forms",
+      "mood": "Impregnable, ordered, deliberately separated",
+      "atmosphere": "Still water in moats, flags on each tower, military precision"
+    },
+    "style": {
+      "medium": "Military fortification blueprint animated",
+      "aesthetic": ["Vauban fortress plans", "military engineering", "architectural elevation"],
+      "color_palette": "Stone grey, moat blue, parchment cream, iron fixtures",
+      "texture": "Dressed stone blocks, still water reflection, aged blueprint lines"
+    },
+    "motion_language": {
+      "camera_movement": "Descending bird's eye, transition to cross-section, return to surface",
+      "subject_animation": "Drawbridges lowering, flags waving gently, still moat water",
+      "transition_style": "Architectural diagram transitions - plan to section to elevation"
+    },
+    "negative_elements": ["network cables", "wireless signals", "shared systems", "connecting tunnels"]
+  }
+}

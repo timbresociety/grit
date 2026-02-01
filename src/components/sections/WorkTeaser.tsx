@@ -7,37 +7,31 @@ import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
-// Placeholder case studies - ready for asset replacement
+// Selected case studies from our portfolio
 const caseStudies = [
     {
-        id: 1,
-        title: "DeFi Protocol",
-        category: "Blockchain",
-        client: "Confidential",
-        description: "Cross-chain liquidity aggregation with intent-based execution.",
-        // PLACEHOLDER: Replace with actual case study image
-        image: null,
-        metrics: ["$50M+ TVL", "5 chains", "0 exploits"]
+        slug: "multi-chain-treasury",
+        title: "Multi-Chain Treasury Infrastructure",
+        category: "Crypto",
+        description: "Event-sourced treasury state system with cross-chain normalization for crypto organizations.",
+        image: "/work/multi-chain-treasury.webp",
+        metrics: ["$1B+ managed", "10+ chains", "300+ orgs"]
     },
     {
-        id: 2,
-        title: "Voice AI Platform",
+        slug: "hybrid-retrieval",
+        title: "Hybrid Retrieval Architecture",
         category: "AI",
-        client: "Enterprise Client",
-        description: "Human-parity voice agents for customer support automation.",
-        // PLACEHOLDER: Replace with actual case study image
-        image: null,
-        metrics: ["200K+ calls/mo", "95% resolution", "<2s latency"]
+        description: "Multi-modal retrieval combining semantic, lexical, and knowledge graph search for technical documentation.",
+        image: "/work/hybrid-retrieval.webp",
+        metrics: ["Sub-second latency", "3 retrieval modes", "Zero hallucination"]
     },
     {
-        id: 3,
-        title: "Supply Chain Traceability",
-        category: "Blockchain",
-        client: "Fortune 500",
-        description: "End-to-end provenance tracking with immutable audit trails.",
-        // PLACEHOLDER: Replace with actual case study image
-        image: null,
-        metrics: ["10M+ items tracked", "3 continents", "Real-time"]
+        slug: "knowledge-isolation",
+        title: "Multi-Tenant Knowledge Isolation",
+        category: "Security",
+        description: "Architecture-driven data isolation for classified programs on shared infrastructure.",
+        image: "/work/knowledge-isolation.webp",
+        metrics: ["Zero leakage", "Audit-ready", "Defense-grade"]
     },
 ]
 
@@ -105,7 +99,7 @@ function CaseStudyCard({ study, index }: CaseStudyCardProps) {
 
                 {/* Link */}
                 <Link
-                    href={`/work/${study.id}`}
+                    href={`/work/${study.slug}`}
                     className="inline-flex items-center gap-2 text-sm text-accent-jewel hover:text-accent-hover transition-colors font-medium mt-auto"
                 >
                     Read Case Study <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
@@ -165,7 +159,7 @@ export default function WorkTeaser() {
             <div className="container-editorial pb-24">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {caseStudies.map((study, i) => (
-                        <CaseStudyCard key={study.id} study={study} index={i} />
+                        <CaseStudyCard key={study.slug} study={study} index={i} />
                     ))}
                 </div>
 

@@ -1,8 +1,7 @@
 {
-  "source_file": "hybrid-retrieval.mdx",
   "user_intent": "Hybrid document retrieval architecture visualized as Renaissance-era library and cataloging system technical illustration",
   "meta": {
-    "aspect_ratio": "4:3",
+    "aspect_ratio": "1:1",
     "quality": "ultra_photorealistic",
     "steps": 55,
     "guidance_scale": 8.0
@@ -52,8 +51,15 @@
   },
   "style_modifiers": {
     "medium": "ink_drawing",
-    "aesthetic": ["baroque", "vintage_50s"],
-    "artist_reference": ["Leonardo da Vinci Codex drawings", "Renaissance polymath notebooks", "Athanasius Kircher illustrations"]
+    "aesthetic": [
+      "baroque",
+      "vintage_50s"
+    ],
+    "artist_reference": [
+      "Leonardo da Vinci Codex drawings",
+      "Renaissance polymath notebooks",
+      "Athanasius Kircher illustrations"
+    ]
   },
   "advanced": {
     "negative_prompt": [
@@ -68,47 +74,5 @@
       "cyberpunk"
     ],
     "hdr_mode": false
-  },
-  "video_prompt": {
-    "duration_seconds": 8,
-    "narrative_concept": "A question enters a grand mechanical library where three different search mechanisms work simultaneously to retrieve and synthesize the answer",
-    "scenes": [
-      {
-        "timestamp": "0-2s",
-        "description": "A handwritten query on parchment is placed into a brass receiving tray at the entrance of an elaborate mechanical library, gears begin to turn as the query is read",
-        "motion": "Query slides in, sensing mechanisms activate, three pathways illuminate",
-        "focal_point": "The query entering the system"
-      },
-      {
-        "timestamp": "2-5s",
-        "description": "Three parallel retrieval mechanisms activate simultaneously: rotating book wheels spin to find semantic matches, index drawers rifle through cards for exact terms, a knowledge web of connected threads highlights relationship paths",
-        "motion": "Book wheels rotate, index cards flip rapidly, thread connections illuminate in sequence",
-        "focal_point": "The parallel operation of three distinct search methods"
-      },
-      {
-        "timestamp": "5-8s",
-        "description": "Results from all three paths converge at a central reading desk where a brass comparator mechanism weighs and combines the findings, producing a final illuminated answer on fresh parchment",
-        "motion": "Books land on desk, cards stack, threads connect, comparator balances, quill writes final answer",
-        "focal_point": "The synthesis point where multiple results become one answer"
-      }
-    ],
-    "environment": {
-      "setting": "Grand Renaissance library with mechanical retrieval systems",
-      "lighting": "Diffuse daylight from high clerestory windows, supplemented by reading lamps",
-      "mood": "Scholarly, ingenious, comprehensive",
-      "atmosphere": "Dust motes, old book smell implied, mechanical precision sounds"
-    },
-    "style": {
-      "medium": "Animated mechanical engineering illustration",
-      "aesthetic": ["Renaissance library", "mechanical Wunderkammer", "da Vinci automation"],
-      "color_palette": "Warm wood brown, brass gold, parchment cream, leather binding red",
-      "texture": "Polished wood, brass patina, leather books, thread fibers"
-    },
-    "motion_language": {
-      "camera_movement": "Entry tracking shot, then wide to show parallel systems, focus on convergence",
-      "subject_animation": "Wheel rotation, card flipping, thread illumination, writing",
-      "transition_style": "Continuous mechanical flow, following the query's journey"
-    },
-    "negative_elements": ["computer screens", "keyboards", "digital interfaces", "search bars", "databases"]
   }
 }

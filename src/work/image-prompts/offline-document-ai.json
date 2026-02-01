@@ -1,8 +1,7 @@
 {
-  "source_file": "offline-document-ai.mdx",
   "user_intent": "Air-gapped offline AI system visualized as Renaissance-era sealed scriptorium and autonomous knowledge chamber",
   "meta": {
-    "aspect_ratio": "4:3",
+    "aspect_ratio": "1:1",
     "quality": "ultra_photorealistic",
     "steps": 55,
     "guidance_scale": 8.0
@@ -52,8 +51,15 @@
   },
   "style_modifiers": {
     "medium": "ink_drawing",
-    "aesthetic": ["gothic", "baroque"],
-    "artist_reference": ["Medieval monastery floor plans", "Leonardo da Vinci architectural studies", "Renaissance hermetic chamber designs"]
+    "aesthetic": [
+      "gothic",
+      "baroque"
+    ],
+    "artist_reference": [
+      "Medieval monastery floor plans",
+      "Leonardo da Vinci architectural studies",
+      "Renaissance hermetic chamber designs"
+    ]
   },
   "advanced": {
     "negative_prompt": [
@@ -68,47 +74,5 @@
       "cyberpunk"
     ],
     "hdr_mode": false
-  },
-  "video_prompt": {
-    "duration_seconds": 8,
-    "narrative_concept": "A sealed medieval scriptorium operates entirely self-sufficiently, processing and illuminating manuscripts with no connection to the outside world",
-    "scenes": [
-      {
-        "timestamp": "0-2s",
-        "description": "Heavy iron doors seal shut on a stone scriptorium chamber, multiple locks engage, the room is completely isolated from the monastery corridors beyond",
-        "motion": "Doors close with weight, locks turn in sequence, dust settles",
-        "focal_point": "The finality of the seal - complete isolation"
-      },
-      {
-        "timestamp": "2-5s",
-        "description": "Inside, a scholar works at a desk surrounded by organized manuscript stacks, an ingenious mechanical sorting system moves documents, oil lamps provide self-contained light",
-        "motion": "Scholar turns pages, mechanical arms retrieve and file documents, gentle lamp flicker",
-        "focal_point": "The self-sufficient work system operating smoothly"
-      },
-      {
-        "timestamp": "5-8s",
-        "description": "The scholar makes notations cross-referencing multiple documents, a brass mechanical index wheel spins to locate related manuscripts, knowledge synthesis happening in complete isolation",
-        "motion": "Index wheel rotates, documents fan open, quill writes annotations",
-        "focal_point": "The intelligence emerging from isolated, complete resources"
-      }
-    ],
-    "environment": {
-      "setting": "Medieval monastery scriptorium, stone walls, no windows",
-      "lighting": "Oil lamp warmth, contained pools of light, deep shadows",
-      "mood": "Contemplative, secure, self-sufficient",
-      "atmosphere": "Enclosed air, parchment smell implied, dust motes in lamplight"
-    },
-    "style": {
-      "medium": "Illuminated manuscript style with subtle animation",
-      "aesthetic": ["medieval scriptorium", "monastic", "contained scholarly space"],
-      "color_palette": "Warm amber lamp light, deep browns, cream parchment, iron grey",
-      "texture": "Stone walls, wooden furniture grain, soft parchment, iron fixtures"
-    },
-    "motion_language": {
-      "camera_movement": "Static establishing, then gentle movements following work flow",
-      "subject_animation": "Page turning, mechanical sorting, quill writing, lamp flicker",
-      "transition_style": "Dissolves within the sealed space, never leaving the room"
-    },
-    "negative_elements": ["windows", "messengers", "external communication", "network connections", "modern devices"]
   }
 }

@@ -3,10 +3,13 @@ export const frontmatter = {
   slug: "smart-wallet",
   date: "2026-01-31",
   status: "published",
-  tags: ["smart-wallet", "account-abstraction", "web3-ux", "crypto-infra", "authentication", "gas-abstraction"]
+  tags: ["smart-wallet", "account-abstraction", "web3-ux", "crypto-infra", "authentication", "gas-abstraction"],
+  image: "/work/smart-wallet.webp"
 }
 
 # Smart Wallet Infrastructure with Gas Abstraction and Passwordless Authentication
+
+<img src="/work/smart-wallet.webp" alt="Smart wallet infrastructure" className="w-full rounded-lg mb-12" />
 
 ## The Problem at Scale
 
@@ -92,13 +95,42 @@ The Safe is the source of truth for authorization. The embedded wallet from Dyna
 
 ## Architectural Decisions
 
-| Decision | Alternatives Considered | Why This Choice |
-|----------|------------------------|-----------------|
-| Embedded wallet via Dynamic | Traditional EOA, full custodial | Eliminates seed phrase requirement while maintaining non-custodial model |
-| Gas abstraction via ERC-4337 paymaster | Native gas sponsorship, meta-transactions | Standard account abstraction approach; works across chains with ERC-4337 support |
-| Safe smart accounts | EOA-only, custom smart wallet | Safe is battle-tested with billions in TVL; extensible via modules |
-| Session keys for routine operations | Full signing for every action | Better UX for frequent operations without sacrificing security |
-| Policy engine for gas sponsorship | Open sponsorship, allowlist only | Prevents abuse while allowing legitimate operations |
+<table>
+  <thead>
+    <tr>
+      <th>Decision</th>
+      <th>Alternatives Considered</th>
+      <th>Why This Choice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Embedded wallet via Dynamic</td>
+      <td>Traditional EOA, full custodial</td>
+      <td>Eliminates seed phrase requirement while maintaining non-custodial model</td>
+    </tr>
+    <tr>
+      <td>Gas abstraction via ERC-4337 paymaster</td>
+      <td>Native gas sponsorship, meta-transactions</td>
+      <td>Standard account abstraction approach; works across chains with ERC-4337 support</td>
+    </tr>
+    <tr>
+      <td>Safe smart accounts</td>
+      <td>EOA-only, custom smart wallet</td>
+      <td>Safe is battle-tested with billions in TVL; extensible via modules</td>
+    </tr>
+    <tr>
+      <td>Session keys for routine operations</td>
+      <td>Full signing for every action</td>
+      <td>Better UX for frequent operations without sacrificing security</td>
+    </tr>
+    <tr>
+      <td>Policy engine for gas sponsorship</td>
+      <td>Open sponsorship, allowlist only</td>
+      <td>Prevents abuse while allowing legitimate operations</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -240,10 +272,7 @@ sequenceDiagram
 ## Related Technical Deep Dives
 
 For how smart wallet infrastructure integrates with treasury operations:
-- **[[Multi-Chain Treasury Infrastructure for Crypto Organizations]]**
+- [Multi-Chain Treasury Infrastructure for Crypto Organizations](/work/multi-chain-treasury)
 
-For the security architecture protecting wallet infrastructure:
-- **[[Banking-Grade Security Architecture for Web3 Financial Infrastructure]]**
-
-For the broader system context:
-- **[[Unified Crypto Financial Infrastructure — Treasury, Pricing, and Multi-Chain Data Systems]]**
+For crypto pricing infrastructure:
+- [Accurate Multi-Source Crypto Pricing Infrastructure](/work/crypto-pricing)

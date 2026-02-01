@@ -1,8 +1,7 @@
 {
-  "source_file": "multi-chain-treasury.mdx",
   "user_intent": "Multi-chain treasury infrastructure visualized as Renaissance-era water management and aqueduct system technical illustration",
   "meta": {
-    "aspect_ratio": "4:3",
+    "aspect_ratio": "1:1",
     "quality": "ultra_photorealistic",
     "steps": 55,
     "guidance_scale": 8.0
@@ -52,8 +51,15 @@
   },
   "style_modifiers": {
     "medium": "ink_drawing",
-    "aesthetic": ["baroque", "vintage_50s"],
-    "artist_reference": ["Roman aqueduct engineering drawings", "Leonardo da Vinci hydraulic studies", "Renaissance civil engineering manuscripts"]
+    "aesthetic": [
+      "baroque",
+      "vintage_50s"
+    ],
+    "artist_reference": [
+      "Roman aqueduct engineering drawings",
+      "Leonardo da Vinci hydraulic studies",
+      "Renaissance civil engineering manuscripts"
+    ]
   },
   "advanced": {
     "negative_prompt": [
@@ -68,47 +74,5 @@
       "bright saturated colors"
     ],
     "hdr_mode": false
-  },
-  "video_prompt": {
-    "duration_seconds": 8,
-    "narrative_concept": "Water from multiple mountain sources at different elevations flows through an engineered aqueduct system into a unified measuring cistern",
-    "scenes": [
-      {
-        "timestamp": "0-2s",
-        "description": "Wide view of four stone aqueduct channels descending from different mountain elevations, each carrying water at different flow rates and colors (representing different chains)",
-        "motion": "Water flows continuously in each channel, camera pans across the sources",
-        "focal_point": "The diversity of sources at varying heights"
-      },
-      {
-        "timestamp": "2-5s",
-        "description": "The aqueducts converge through a series of flow control gates and measurement wheels, water mixing and normalizing as channels merge through engineering structures",
-        "motion": "Water wheels turn from flow, gates adjust levels, streams combine smoothly",
-        "focal_point": "The convergence engineering and flow regulation"
-      },
-      {
-        "timestamp": "5-8s",
-        "description": "The unified stream pours into a central stone cistern with measurement markings, a brass gauge shows the total volume, water surface settles to calm",
-        "motion": "Final pour into cistern, ripples settle, gauge needle steadies",
-        "focal_point": "The measurement gauge showing unified total"
-      }
-    ],
-    "environment": {
-      "setting": "Roman-style engineering complex in mountainous terrain",
-      "lighting": "Late afternoon sun, warm directional light casting long shadows",
-      "mood": "Monumental, engineered, controlled",
-      "atmosphere": "Mist from water, distant mountains, ancient stonework"
-    },
-    "style": {
-      "medium": "Architectural engineering drawing brought to life",
-      "aesthetic": ["Roman aqueduct", "da Vinci hydraulic studies", "technical cross-section"],
-      "color_palette": "Stone grey, water blue-green, brass measurement instruments, terracotta accents",
-      "texture": "Weathered stone, flowing water caustics, aged brass"
-    },
-    "motion_language": {
-      "camera_movement": "Aerial establishing shot, then follows water flow downstream",
-      "subject_animation": "Continuous water flow, turning water wheels, settling cistern",
-      "transition_style": "Following shot tracking the water's journey"
-    },
-    "negative_elements": ["pipes", "pumps", "electric motors", "modern infrastructure", "concrete"]
   }
 }

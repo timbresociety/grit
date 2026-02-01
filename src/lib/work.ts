@@ -4,6 +4,7 @@ export interface WorkPost {
   date: string
   status: string
   tags: string[]
+  image?: string
   industry?: string
   domain?: string
   tech?: string
@@ -17,21 +18,24 @@ const workPosts: WorkPost[] = [
     title: "Accurate Multi-Source Crypto Pricing Infrastructure for Accounting and Financial Reporting",
     date: "2026-01-31",
     status: "published",
-    tags: ["crypto-pricing", "accounting", "market-data", "financial-infra", "reconciliation", "audit"]
+    tags: ["crypto-pricing", "accounting", "market-data", "financial-infra", "reconciliation", "audit"],
+    image: "/work/crypto-pricing.webp"
   },
   {
     slug: "multi-chain-treasury",
     title: "Multi-Chain Treasury Infrastructure for Crypto Organizations",
     date: "2026-01-31",
     status: "published",
-    tags: ["crypto", "treasury", "multi-chain", "evm", "fintech", "distributed-systems"]
+    tags: ["crypto", "treasury", "multi-chain", "evm", "fintech", "distributed-systems"],
+    image: "/work/multi-chain-treasury.webp"
   },
   {
     slug: "smart-wallet",
     title: "Smart Wallet Infrastructure with Gas Abstraction and Passwordless Authentication",
     date: "2026-01-31",
     status: "published",
-    tags: ["smart-wallet", "account-abstraction", "web3-ux", "crypto-infra", "authentication", "gas-abstraction"]
+    tags: ["smart-wallet", "account-abstraction", "web3-ux", "crypto-infra", "authentication", "gas-abstraction"],
+    image: "/work/smart-wallet.webp"
   },
   {
     slug: "knowledge-isolation",
@@ -39,6 +43,7 @@ const workPosts: WorkPost[] = [
     date: "2025-12-16",
     status: "published",
     tags: ["multi-tenant", "secure-architecture", "rag", "data-isolation", "enterprise-ai"],
+    image: "/work/knowledge-isolation.webp",
     industry: "defense / aerospace / enterprise",
     domain: "secure data architecture",
     tech: "vector db isolation, namespace security, hybrid indexing"
@@ -49,6 +54,7 @@ const workPosts: WorkPost[] = [
     date: "2025-12-16",
     status: "published",
     tags: ["rag", "hybrid-retrieval", "vector-search", "knowledge-graphs", "technical-ai"],
+    image: "/work/hybrid-retrieval.webp",
     industry: "aerospace / manufacturing / industrial",
     domain: "technical document intelligence",
     tech: "embeddings, bm25, knowledge graph retrieval, reranking"
@@ -59,6 +65,7 @@ const workPosts: WorkPost[] = [
     date: "2025-12-16",
     status: "published",
     tags: ["offline-ai", "rag", "secure-ai", "defense", "airgapped", "document-intelligence"],
+    image: "/work/offline-document-ai.webp",
     industry: "defense / aerospace / regulated industries",
     domain: "secure AI infrastructure",
     tech: "local llm, vector db, hybrid retrieval, microservices"

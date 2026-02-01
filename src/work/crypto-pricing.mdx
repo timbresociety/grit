@@ -3,10 +3,13 @@ export const frontmatter = {
   slug: "crypto-pricing",
   date: "2026-01-31",
   status: "published",
-  tags: ["crypto-pricing", "accounting", "market-data", "financial-infra", "reconciliation", "audit"]
+  tags: ["crypto-pricing", "accounting", "market-data", "financial-infra", "reconciliation", "audit"],
+  image: "/work/crypto-pricing.webp"
 }
 
 # Accurate Multi-Source Crypto Pricing Infrastructure for Accounting and Financial Reporting
+
+<img src="/work/crypto-pricing.webp" alt="Multi-source crypto pricing infrastructure" className="w-full rounded-lg mb-12" />
 
 ## The Problem at Scale
 
@@ -85,13 +88,42 @@ This means cross-source queries are meaningful. "What was the CoinGecko price vs
 
 ## Architectural Decisions
 
-| Decision                                      | Alternatives Considered            | Why This Choice                                                                                                |
-| --------------------------------------------- | ---------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Multi-source with methodology-aware selection | Single authoritative source        | No single source covers all assets reliably; different use cases require different methodologies               |
-| Preserve source metadata with every price     | Store only "final" price           | Audit requires traceability; debugging requires knowing which source was used                                  |
-| Timestamp alignment layer                     | Trust provider timestamps directly | Providers have clock drift and different aggregation windows; cross-source queries need consistent time domain |
-| Immutable price snapshots at ingestion        | Re-fetch historical data as needed | Providers sometimes revise historical data; audit requires knowing what was known at decision time             |
-| Configurable methodology per organization     | One-size-fits-all pricing          | Different accounting standards (GAAP, IFRS) and use cases require different approaches                         |
+<table>
+  <thead>
+    <tr>
+      <th>Decision</th>
+      <th>Alternatives Considered</th>
+      <th>Why This Choice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Multi-source with methodology-aware selection</td>
+      <td>Single authoritative source</td>
+      <td>No single source covers all assets reliably; different use cases require different methodologies</td>
+    </tr>
+    <tr>
+      <td>Preserve source metadata with every price</td>
+      <td>Store only "final" price</td>
+      <td>Audit requires traceability; debugging requires knowing which source was used</td>
+    </tr>
+    <tr>
+      <td>Timestamp alignment layer</td>
+      <td>Trust provider timestamps directly</td>
+      <td>Providers have clock drift and different aggregation windows; cross-source queries need consistent time domain</td>
+    </tr>
+    <tr>
+      <td>Immutable price snapshots at ingestion</td>
+      <td>Re-fetch historical data as needed</td>
+      <td>Providers sometimes revise historical data; audit requires knowing what was known at decision time</td>
+    </tr>
+    <tr>
+      <td>Configurable methodology per organization</td>
+      <td>One-size-fits-all pricing</td>
+      <td>Different accounting standards (GAAP, IFRS) and use cases require different approaches</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -250,10 +282,4 @@ Each methodology is implemented as a configuration layer over the same underlyin
 ## Related Technical Deep Dives
 
 For how priced assets feed into treasury state:
-- **[[Multi-Chain Treasury Infrastructure for Crypto Organizations]]**
-
-For how pricing data integrates with blockchain data indexing:
-- **[[Multi-Chain Blockchain Data Indexing and Analytics Infrastructure]]**
-
-For the broader system architecture:
-- **[[Unified Crypto Financial Infrastructure — Treasury, Pricing, and Multi-Chain Data Systems]]**
+- [Multi-Chain Treasury Infrastructure for Crypto Organizations](/work/multi-chain-treasury)

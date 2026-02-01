@@ -3,10 +3,13 @@ export const frontmatter = {
   slug: "multi-chain-treasury",
   date: "2026-01-31",
   status: "published",
-  tags: ["crypto", "treasury", "multi-chain", "evm", "fintech", "distributed-systems"]
+  tags: ["crypto", "treasury", "multi-chain", "evm", "fintech", "distributed-systems"],
+  image: "/work/multi-chain-treasury.webp"
 }
 
 # Multi-Chain Treasury Infrastructure for Crypto Organizations
+
+<img src="/work/multi-chain-treasury.webp" alt="Multi-chain treasury infrastructure" className="w-full rounded-lg mb-12" />
 
 ## The Problem at Scale
 
@@ -70,13 +73,42 @@ The treasury dashboard might show a transaction as soon as it's seen—users exp
 
 ## Architectural Decisions
 
-| Decision | Alternatives Considered | Why This Choice |
-|----------|------------------------|-----------------|
-| Event-sourced state | Snapshot-based, CQRS without full event log | Audits require deterministic historical reconstruction; snapshots can't provide arbitrary point-in-time queries |
-| Preserve raw chain data alongside normalized views | Normalize and discard original | Debugging and compliance require access to original chain semantics |
-| Confirmation-depth state machine | Binary confirmed/unconfirmed | Different use cases have different finality requirements; single threshold is too restrictive |
-| Streaming payments as first-class primitives | Model as discrete transaction series | Sablier/Superfluid integrations require continuous balance awareness |
-| Chain-agnostic timestamp canonicalization | Use block timestamps directly | Block times vary by chain; cross-chain queries need consistent time domain |
+<table>
+  <thead>
+    <tr>
+      <th>Decision</th>
+      <th>Alternatives Considered</th>
+      <th>Why This Choice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Event-sourced state</td>
+      <td>Snapshot-based, CQRS without full event log</td>
+      <td>Audits require deterministic historical reconstruction; snapshots can't provide arbitrary point-in-time queries</td>
+    </tr>
+    <tr>
+      <td>Preserve raw chain data alongside normalized views</td>
+      <td>Normalize and discard original</td>
+      <td>Debugging and compliance require access to original chain semantics</td>
+    </tr>
+    <tr>
+      <td>Confirmation-depth state machine</td>
+      <td>Binary confirmed/unconfirmed</td>
+      <td>Different use cases have different finality requirements; single threshold is too restrictive</td>
+    </tr>
+    <tr>
+      <td>Streaming payments as first-class primitives</td>
+      <td>Model as discrete transaction series</td>
+      <td>Sablier/Superfluid integrations require continuous balance awareness</td>
+    </tr>
+    <tr>
+      <td>Chain-agnostic timestamp canonicalization</td>
+      <td>Use block timestamps directly</td>
+      <td>Block times vary by chain; cross-chain queries need consistent time domain</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -197,14 +229,8 @@ This infrastructure operates at meaningful scale:
 
 ## Related Technical Deep Dives
 
-For how raw blockchain data becomes financial data:
-- **[[Multi-Chain Blockchain Data Indexing and Analytics Infrastructure]]**
-
 For how assets are valued for reporting:
-- **[[Accurate Multi-Source Crypto Pricing Infrastructure for Accounting and Financial Reporting]]**
+- [Accurate Multi-Source Crypto Pricing Infrastructure](/work/crypto-pricing)
 
-For the security architecture protecting this infrastructure:
-- **[[Banking-Grade Security Architecture for Web3 Financial Infrastructure]]**
-
-For the broader system context:
-- **[[Unified Crypto Financial Infrastructure — Treasury, Pricing, and Multi-Chain Data Systems]]**
+For smart wallet integration:
+- [Smart Wallet Infrastructure with Gas Abstraction](/work/smart-wallet)

@@ -1,8 +1,7 @@
 {
-  "source_file": "knowledge-isolation.mdx",
   "user_intent": "Multi-tenant data isolation architecture visualized as Renaissance fortress and vault system technical illustration",
   "meta": {
-    "aspect_ratio": "4:3",
+    "aspect_ratio": "1:1",
     "quality": "ultra_photorealistic",
     "steps": 55,
     "guidance_scale": 8.0
@@ -52,8 +51,14 @@
   },
   "style_modifiers": {
     "medium": "ink_drawing",
-    "aesthetic": ["baroque"],
-    "artist_reference": ["Sebastien Le Prestre de Vauban fortification plans", "Leonardo da Vinci military engineering", "Renaissance citadel blueprints"]
+    "aesthetic": [
+      "baroque"
+    ],
+    "artist_reference": [
+      "Sebastien Le Prestre de Vauban fortification plans",
+      "Leonardo da Vinci military engineering",
+      "Renaissance citadel blueprints"
+    ]
   },
   "advanced": {
     "negative_prompt": [
@@ -68,47 +73,5 @@
       "bright colors"
     ],
     "hdr_mode": false
-  },
-  "video_prompt": {
-    "duration_seconds": 8,
-    "narrative_concept": "Three independent fortified vaults stand on separate foundations with no connecting passages, demonstrating architectural impossibility of breach",
-    "scenes": [
-      {
-        "timestamp": "0-2s",
-        "description": "Bird's eye view descends toward a fortress complex showing three distinct fortified structures, each surrounded by its own moat, no bridges between them",
-        "motion": "Camera descends slowly, revealing the complete separation",
-        "focal_point": "The visible gaps and moats ensuring no connection"
-      },
-      {
-        "timestamp": "2-5s",
-        "description": "Cross-section view revealing each vault has independent foundations going deep into bedrock, separate water sources, self-contained supply systems - no underground tunnels connect them",
-        "motion": "Camera moves through cutaway view showing depth of isolation",
-        "focal_point": "The underground separation - foundations not touching"
-      },
-      {
-        "timestamp": "5-8s",
-        "description": "Return to surface view showing the central gatehouse that controls access, each vault door opening only to verified visitors through separate drawbridges",
-        "motion": "Three drawbridges lower independently to three different authorized visitors",
-        "focal_point": "Controlled, verified, independent access paths"
-      }
-    ],
-    "environment": {
-      "setting": "Vauban-style star fortress complex in cleared landscape",
-      "lighting": "Overcast diffuse light emphasizing architectural forms",
-      "mood": "Impregnable, ordered, deliberately separated",
-      "atmosphere": "Still water in moats, flags on each tower, military precision"
-    },
-    "style": {
-      "medium": "Military fortification blueprint animated",
-      "aesthetic": ["Vauban fortress plans", "military engineering", "architectural elevation"],
-      "color_palette": "Stone grey, moat blue, parchment cream, iron fixtures",
-      "texture": "Dressed stone blocks, still water reflection, aged blueprint lines"
-    },
-    "motion_language": {
-      "camera_movement": "Descending bird's eye, transition to cross-section, return to surface",
-      "subject_animation": "Drawbridges lowering, flags waving gently, still moat water",
-      "transition_style": "Architectural diagram transitions - plan to section to elevation"
-    },
-    "negative_elements": ["network cables", "wireless signals", "shared systems", "connecting tunnels"]
   }
 }

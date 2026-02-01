@@ -10,6 +10,7 @@ interface WorkPost {
     title: string
     date: string
     tags: string[]
+    image?: string
 }
 
 export default function Work() {
@@ -75,14 +76,22 @@ export default function Work() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
                     {posts.map((post, i) => (
                         <Link href={`/work/${post.slug}`} key={post.slug} className="group block relative">
-                            {/* Image Placeholder with Mask Reveal */}
+                            {/* Image with Mask Reveal */}
                             <div className="relative aspect-[4/3] bg-white/5 border border-white/10 overflow-hidden mb-8 rounded-lg">
-                                <div className="absolute inset-0 bg-neutral-900 group-hover:bg-neutral-800 transition-colors duration-500"></div>
-
-                                {/* Placeholder Content */}
-                                <div className="absolute inset-0 flex items-center justify-center text-white/10 text-9xl font-serif font-bold opacity-20 group-hover:scale-110 transition-transform duration-700">
-                                    {i + 1}
-                                </div>
+                                {post.image ? (
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                                    />
+                                ) : (
+                                    <>
+                                        <div className="absolute inset-0 bg-neutral-900 group-hover:bg-neutral-800 transition-colors duration-500"></div>
+                                        <div className="absolute inset-0 flex items-center justify-center text-white/10 text-9xl font-serif font-bold opacity-20 group-hover:scale-110 transition-transform duration-700">
+                                            {i + 1}
+                                        </div>
+                                    </>
+                                )}
 
                                 {/* Mask Overlay */}
                                 <div className="absolute inset-0 bg-neon-blue mix-blend-overlay opacity-0 group-hover:opacity-20 transition-opacity duration-500"></div>

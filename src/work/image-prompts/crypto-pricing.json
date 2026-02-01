@@ -1,8 +1,7 @@
 {
-  "source_file": "crypto-pricing.mdx",
   "user_intent": "Multi-source cryptocurrency pricing infrastructure visualized as Renaissance-era technical manuscript illustration",
   "meta": {
-    "aspect_ratio": "4:3",
+    "aspect_ratio": "1:1",
     "quality": "ultra_photorealistic",
     "steps": 55,
     "guidance_scale": 8.0
@@ -52,8 +51,15 @@
   },
   "style_modifiers": {
     "medium": "pencil_sketch",
-    "aesthetic": ["baroque", "vintage_50s"],
-    "artist_reference": ["Leonardo da Vinci technical drawings", "Renaissance engineering manuscripts", "Vitruvian mechanical illustrations"]
+    "aesthetic": [
+      "baroque",
+      "vintage_50s"
+    ],
+    "artist_reference": [
+      "Leonardo da Vinci technical drawings",
+      "Renaissance engineering manuscripts",
+      "Vitruvian mechanical illustrations"
+    ]
   },
   "advanced": {
     "negative_prompt": [
@@ -69,47 +75,5 @@
       "photorealistic humans"
     ],
     "hdr_mode": false
-  },
-  "video_prompt": {
-    "duration_seconds": 8,
-    "narrative_concept": "Chaotic price data streams converge through precision clockwork into a single balanced measurement",
-    "scenes": [
-      {
-        "timestamp": "0-2s",
-        "description": "Four separate brass clockwork channels, each receiving different streams of numerical inscriptions on parchment ribbons, gears initially spinning at conflicting speeds",
-        "motion": "Each mechanism operates independently, slight discord in rhythm",
-        "focal_point": "The divergent ticker ribbons showing different values"
-      },
-      {
-        "timestamp": "2-5s",
-        "description": "The channels merge into a central clockwork hub, gears meshing and synchronizing, balance scales in the center begin weighing and comparing the inputs",
-        "motion": "Gears gradually align, ribbons feed into central mechanism, balance scales oscillate then stabilize",
-        "focal_point": "The convergence point where streams unify"
-      },
-      {
-        "timestamp": "5-8s",
-        "description": "A single brass stylus inscribes the final reconciled value onto fresh parchment, balance scales perfectly level, all gears turning in harmony",
-        "motion": "Stylus moves deliberately across parchment, gentle steam wisps rise from mechanism",
-        "focal_point": "The inscription being written - the authoritative price"
-      }
-    ],
-    "environment": {
-      "setting": "Renaissance workshop with astronomical instruments on wooden tables",
-      "lighting": "Golden hour sunlight streaming through leaded windows, side-lit",
-      "mood": "Precise, methodical, trustworthy",
-      "atmosphere": "Faint dust motes in light beams, warm amber tones"
-    },
-    "style": {
-      "medium": "Animated ink and watercolor on aged parchment",
-      "aesthetic": ["baroque", "technical manuscript", "da Vinci mechanical"],
-      "color_palette": "Sepia, brass gold, deep brown, cream parchment",
-      "texture": "Visible paper grain, foxing at edges, ink bleeding slightly"
-    },
-    "motion_language": {
-      "camera_movement": "Slow dolly from wide establishing to tight on final inscription",
-      "subject_animation": "Smooth gear rotation, ribbon feed, scale oscillation dampening to stillness",
-      "transition_style": "Continuous single shot, no cuts"
-    },
-    "negative_elements": ["digital screens", "LED displays", "modern technology", "neon colors", "chrome", "plastic"]
   }
 }
