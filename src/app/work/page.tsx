@@ -1,41 +1,60 @@
-"use client"
+'use client'
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
-const caseStudies = [
-    {
-        slug: "defi-aggregator",
-        client: "YieldMaster",
-        title: "Cross-Chain DeFi Aggregator",
-        description: "Unified liquidity layer allowing users to stake assets across 7 chains in a single transaction.",
-        tags: ["Blockchain", "Smart Contracts", "React"]
-    },
-    {
-        slug: "ai-legal-assistant",
-        client: "LexTech",
-        title: "Autonomous Legal Aide",
-        description: "Agentic workflow that parses thousands of case files to generate pretrial memos.",
-        tags: ["AI Agents", "RAG", "Python"]
-    },
-    {
-        slug: "rwa-marketplace",
-        client: "EstateBlock",
-        title: "Real Estate Tokenization",
-        description: "Fractional ownership platform complying with Reg D/S for high-value properties.",
-        tags: ["RWA", "Solidity", "Compliance"]
-    },
-    {
-        slug: "supply-chain-track",
-        client: "Logistix",
-        title: "Pharma Supply Chain",
-        description: "IoT + Blockchain solution ensuring temperature integrity for vaccine distribution.",
-        tags: ["IoT", "Traceability", "Enterprise"]
-    }
-]
+interface WorkPost {
+    slug: string
+    title: string
+    date: string
+    tags: string[]
+}
 
 export default function Work() {
+    const [posts, setPosts] = useState<WorkPost[]>([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        fetch('/api/work')
+            .then(res => res.json())
+            .then(data => {
+                setPosts(data)
+                setLoading(false)
+            })
+            .catch(() => {
+                setLoading(false)
+            })
+    }, [])
+
+    if (loading) {
+        return (
+            <section className="min-h-screen bg-[#050505] pt-32 pb-24 px-6 text-white">
+                <div className="container mx-auto">
+                    <div className="mb-20">
+                        <span className="text-neon-blue uppercase tracking-[0.2em] text-xs font-semibold">
+                            Selected Work
+                        </span>
+                        <h1 className="text-6xl md:text-8xl font-serif font-bold mt-4 leading-none">
+                            Case Studies
+                        </h1>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="animate-pulse">
+                                <div className="aspect-[4/3] bg-white/5 rounded-lg mb-8" />
+                                <div className="h-4 bg-white/5 rounded w-1/3 mb-4" />
+                                <div className="h-8 bg-white/5 rounded w-2/3 mb-2" />
+                                <div className="h-4 bg-white/5 rounded w-full" />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+        )
+    }
+
     return (
         <section className="min-h-screen bg-[#050505] pt-32 pb-24 px-6 text-white">
             <div className="container mx-auto">
@@ -54,8 +73,8 @@ export default function Work() {
                 </motion.div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-16">
-                    {caseStudies.map((study, i) => (
-                        <Link href={`/work/${study.slug}`} key={study.slug} className="group block relative">
+                    {posts.map((post, i) => (
+                        <Link href={`/work/${post.slug}`} key={post.slug} className="group block relative">
                             {/* Image Placeholder with Mask Reveal */}
                             <div className="relative aspect-[4/3] bg-white/5 border border-white/10 overflow-hidden mb-8 rounded-lg">
                                 <div className="absolute inset-0 bg-neutral-900 group-hover:bg-neutral-800 transition-colors duration-500"></div>
@@ -71,21 +90,23 @@ export default function Work() {
 
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <div className="flex gap-3 mb-3">
-                                        {study.tags.map(tag => (
+                                    <div className="flex gap-3 mb-3 flex-wrap">
+                                        {post.tags.slice(0, 3).map(tag => (
                                             <span key={tag} className="text-xs font-mono text-neon-blue border border-neon-blue/30 px-2 py-1 rounded-full uppercase tracking-wider">
                                                 {tag}
                                             </span>
                                         ))}
                                     </div>
-                                    <h3 className="text-3xl font-serif font-bold mb-2 group-hover:text-neon-blue transition-colors">
-                                        {study.title}
+                                    <h3 className="text-2xl md:text-3xl font-serif font-bold mb-2 group-hover:text-neon-blue transition-colors leading-tight">
+                                        {post.title}
                                     </h3>
-                                    <p className="text-white/60 max-w-md font-light leading-relaxed">
-                                        {study.description}
-                                    </p>
+                                    {post.date && (
+                                        <p className="text-white/40 text-sm font-mono">
+                                            {new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
+                                        </p>
+                                    )}
                                 </div>
-                                <ArrowUpRight className="text-white/20 group-hover:text-neon-blue transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1 duration-300" size={32} />
+                                <ArrowUpRight className="text-white/20 group-hover:text-neon-blue transition-colors transform group-hover:translate-x-1 group-hover:-translate-y-1 duration-300 flex-shrink-0 ml-4" size={32} />
                             </div>
                         </Link>
                     ))}
