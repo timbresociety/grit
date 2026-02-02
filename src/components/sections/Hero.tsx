@@ -75,9 +75,9 @@ export default function Hero() {
                             y: prefersReducedMotion ? 0 : contentY
                         }}
                     >
-                        {/* Main Headline - Glass panel */}
+                        {/* Main Headline - Glass panel with text reveal */}
                         <motion.div
-                            className="glass-panel-dark p-6 md:p-8 mb-6"
+                            className="glass-panel-dark p-6 md:p-8 mb-6 overflow-hidden"
                             initial={{ opacity: 0, y: 30 }}
                             animate={isLoaded ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
                             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
@@ -88,8 +88,29 @@ export default function Hero() {
                                     letterSpacing: '-0.02em'
                                 }}
                             >
-                                <span style={{ fontFamily: 'var(--font-imperial)', paddingRight: '0.2em' }}>Engineered</span><br />
-                                <span style={{ fontFamily: 'var(--font-serif)' }}>to Endure.</span>
+                                <span className="inline-block overflow-hidden">
+                                    <motion.span
+                                        className="inline-block font-imperial text-accent-warm"
+                                        style={{ paddingRight: '0.2em' }}
+                                        initial={{ y: '100%', opacity: 0 }}
+                                        animate={isLoaded ? { y: 0, opacity: 1 } : { y: '100%', opacity: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                                    >
+                                        Engineered
+                                    </motion.span>
+                                </span>
+                                <br />
+                                <span className="inline-block overflow-hidden">
+                                    <motion.span
+                                        className="inline-block"
+                                        style={{ fontFamily: 'var(--font-serif)' }}
+                                        initial={{ y: '100%', opacity: 0 }}
+                                        animate={isLoaded ? { y: 0, opacity: 1 } : { y: '100%', opacity: 0 }}
+                                        transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                    >
+                                        to Endure.
+                                    </motion.span>
+                                </span>
                             </h1>
                         </motion.div>
 
@@ -117,7 +138,7 @@ export default function Hero() {
                                     rel="noopener noreferrer"
                                     className="btn-primary"
                                 >
-                                    Book a Build Sprint <ArrowRight size={16} />
+                                    Explore A Build Sprint <ArrowRight size={16} />
                                 </a>
                                 <a
                                     href="#services"

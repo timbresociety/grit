@@ -58,12 +58,12 @@ function PhaseCard({ phase, index, total }: { phase: Phase; index: number; total
     const isLast = index === total - 1
 
     // Last card is RELATIVE, others are STICKY
-    // This allows the last card to scroll normally "over" the stack and then away
+    // This allows the last card to scroll visually "over" the stack and then away with the flow
     const positioningStyle = isLast ? {
         position: 'relative',
         top: 'auto',
         marginBottom: 0,
-        marginTop: '-1px' // Slight overlap to prevent pixel gaps
+        // No negative margin needed if flows are correct
     } : {
         position: 'sticky',
         top: topOffset,
@@ -228,7 +228,7 @@ export default function Process() {
                         rel="noopener noreferrer"
                         className="btn-secondary inline-flex text-lg px-8 py-4"
                     >
-                        Start Your Sprint <ArrowRight size={20} className="ml-2" />
+                        Explore A Build Sprint <ArrowRight size={20} className="ml-2" />
                     </a>
                 </motion.div>
             </div>

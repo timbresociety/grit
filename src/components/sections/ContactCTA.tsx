@@ -105,7 +105,7 @@ export default function ContactCTA() {
                         transition={{ delay: 0.1, duration: 0.8 }}
                     >
                         <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-4">
-                            Ready to Build?
+                            Ready to <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-warm">Build ?</span>
                         </h2>
                         <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
                             Let's discuss how we can bring your vision to production.
@@ -127,7 +127,7 @@ export default function ContactCTA() {
                         rel="noopener noreferrer"
                         className="btn-primary inline-flex text-base px-8 py-4 "
                     >
-                        Start Your Build Sprint <ArrowRight size={18} />
+                        Explore A Build Sprint <ArrowRight size={18} />
                     </a>
                 </motion.div>
 

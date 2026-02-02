@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from 'next'
-import { DM_Sans, Cormorant_Garamond, Playfair_Display, Imperial_Script } from 'next/font/google'
+import { DM_Sans, Cormorant_Garamond, Playfair_Display, Imperial_Script, Instrument_Serif } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import Navbar from '@/components/ui/Navbar'
 import ChapterNav from '@/components/ui/ChapterNav'
 import PerformanceGate from '@/components/providers/PerformanceGate'
 import MotionProvider from '@/components/providers/MotionProvider'
 import { HeroLoadingProvider } from '@/contexts/HeroLoadingContext'
+import PageLoader from '@/components/ui/PageLoader'
+import CustomCursor from '@/components/ui/CustomCursor'
 
 const dmSans = DM_Sans({
   subsets: ['latin'],
@@ -35,21 +38,41 @@ const imperialScript = Imperial_Script({
   weight: ['400']
 })
 
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+  weight: '400',
+  style: ['normal', 'italic']
+})
+
+const ppMondwest = localFont({
+  src: '../../public/fonts/PPMondwest-Regular.otf',
+  variable: '--font-pp-mondwest',
+  display: 'swap'
+})
+
+const ppNeueBit = localFont({
+  src: '../../public/fonts/PPNeueBit-Bold.otf',
+  variable: '--font-pp-neuebit',
+  display: 'swap'
+})
+
 export const metadata: Metadata = {
-  title: 'Grit Labs | Enterprise AI & Blockchain Engineering',
-  description: 'Grit Labs builds bespoke AI agents and blockchain infrastructure for enterprise scale. Precision engineered by senior operators.',
-  keywords: ['AI Agents', 'Blockchain Engineering', 'Web3', 'Enterprise AI', 'RWA Tokenization'],
+  title: 'GRIT Labs | Engineered to Endure',
+  description: 'We build bespoke AI and Blockchain software for teams that think long term. Enterprise grade. Operator led.',
+  keywords: ['AI Agents', 'Blockchain Engineering', 'Web3', 'Enterprise AI', 'RWA Tokenization', 'Bespoke Software'],
   openGraph: {
-    title: 'Grit Labs | Precision Engineering',
-    description: 'Bespoke AI + Blockchain infrastructure. Built by senior operators for enterprise scale.',
+    title: 'GRIT Labs | Engineered to Endure',
+    description: 'We build bespoke AI and Blockchain software for teams that think long term. Enterprise grade. Operator led.',
     url: 'https://grit.cool',
-    siteName: 'Grit Labs',
+    siteName: 'GRIT Labs',
     images: [
       {
         url: 'https://grit.cool/og.png',
         width: 1200,
         height: 630,
-        alt: 'Grit Labs - Precision Engineering',
+        alt: 'GRIT Labs - Engineered to Endure',
       },
     ],
     locale: 'en_US',
@@ -57,8 +80,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Grit Labs',
-    description: 'Enterprise AI & Blockchain Engineering.',
+    title: 'GRIT Labs | Engineered to Endure',
+    description: 'We build bespoke AI and Blockchain software for teams that think long term. Enterprise grade. Operator led.',
     creator: '@gritlabsinit',
   },
 }
@@ -76,11 +99,13 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${playfair.variable} ${imperialScript.variable}`}>
+    <html lang="en" className={`${dmSans.variable} ${cormorant.variable} ${playfair.variable} ${imperialScript.variable} ${instrumentSerif.variable} ${ppMondwest.variable} ${ppNeueBit.variable}`}>
       <body className="bg-background text-foreground antialiased overflow-x-hidden">
+        <CustomCursor />
         <PerformanceGate>
           <MotionProvider>
             <HeroLoadingProvider>
+              <PageLoader />
               <Navbar />
               <main className="relative">
                 {children}

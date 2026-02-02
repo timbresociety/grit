@@ -4,7 +4,6 @@ import { ReactNode, createContext, useContext, useState, useCallback, useEffect 
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import ScrollVideoBackground from './ScrollVideoBackground'
-import SectionNav from './SectionNav'
 
 // Section configuration
 const SECTIONS = [
@@ -67,9 +66,6 @@ export default function EditorialLayout({ children }: EditorialLayoutProps) {
         <ActiveSectionContext.Provider value={{ activeSection, setActiveSection }}>
             {/* Fixed video/image background */}
             <ScrollVideoBackground />
-
-            {/* Section navigation sidebar */}
-            <SectionNav sections={SECTIONS} activeSection={activeSection} />
 
             {/* Main content - flows over the background */}
             <main className="relative z-10">

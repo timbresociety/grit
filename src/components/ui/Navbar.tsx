@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 import { useHeroLoading } from '@/contexts/HeroLoadingContext'
@@ -27,9 +28,16 @@ export default function Navbar() {
                 >
                     <Link
                         href="/"
-                        className="font-serif text-xl font-medium tracking-tight hover:opacity-70 transition-opacity bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
+                        className="flex items-center gap-2 hover:opacity-70 transition-opacity bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
                     >
-                        Grit Labs
+                        <Image
+                            src="/images/logo.png"
+                            alt="GRIT Labs"
+                            width={24}
+                            height={24}
+                            className="brightness-0"
+                        />
+                        <span className="text-lg font-medium tracking-tight" style={{ fontFamily: 'var(--font-pp-mondwest)' }}>GRIT Labs</span>
                     </Link>
                 </motion.div>
 
@@ -56,9 +64,9 @@ export default function Navbar() {
                             href="https://calendly.com/gritlabsinit"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="btn-primary text-xs py-2.5 px-5"
+                            className="inline-flex items-center gap-2 text-sm text-neutral-800 hover:text-black transition-colors bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
                         >
-                            Start a Project <ArrowRight size={14} />
+                            Explore A Build Sprint <ArrowRight size={14} />
                         </a>
                     </motion.div>
                 </div>

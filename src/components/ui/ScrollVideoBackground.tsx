@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
+import ParticleOverlay from './ParticleOverlay'
 
 // Total number of frames in the video sequence
 export const TOTAL_FRAMES = 1032
@@ -192,7 +193,15 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
     }, [getFrameForScroll, scheduleRender])
 
     // Initial frame loading
+    // Initial frame loading
     useEffect(() => {
+        // Reset scroll on hard refresh or initial load to prevent mismatch
+        // Using history.scrollRestoration to 'manual' if mostly video driven
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual'
+        }
+        window.scrollTo(0, 0)
+
         const loadInitialFrames = async () => {
             try {
                 const firstImg = await loadFrame(1)
@@ -204,14 +213,14 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
                     }
                 }
 
-                // Preload section start frames
+                // Preload section start frames - prioritized
                 const sectionStarts = Object.values(SECTION_FRAME_MAP).map(range => range.start)
                 for (const frame of sectionStarts) {
                     loadFrame(frame).catch(() => { })
                 }
 
-                // Preload first 100 frames for smooth hero
-                for (let i = 2; i <= 100; i++) {
+                // Preload first 50 frames for immediate hero interaction
+                for (let i = 2; i <= 50; i++) {
                     loadFrame(i).catch(() => { })
                 }
             } catch (err) {
@@ -290,12 +299,53 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
                     height: '100vh',
                 }}
             />
+
+            {/* Noise/Grain overlay - masks low resolution */}
             <div
-                className="fixed inset-0 z-[1] pointer-events-none"
+                className="fixed inset-0 z-[1] pointer-events-none opacity-[0.12]"
                 style={{
-                    background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.05) 70%, rgba(0,0,0,0.3) 100%)'
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'repeat',
+                    mixBlendMode: 'overlay',
                 }}
             />
+
+            {/* Color dithering layer - adds warmth */}
+            <div
+                className="fixed inset-0 z-[1] pointer-events-none opacity-[0.04]"
+                style={{
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='colorNoise'%3E%3CfeTurbulence type='turbulence' baseFrequency='0.5' numOctaves='3' seed='5' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0.3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23colorNoise)'/%3E%3C/svg%3E")`,
+                    backgroundRepeat: 'repeat',
+                }}
+            />
+
+            {/* Scanline effect - subtle horizontal lines */}
+            <div
+                className="fixed inset-0 z-[2] pointer-events-none opacity-[0.03]"
+                style={{
+                    backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px)',
+                    backgroundSize: '100% 4px',
+                }}
+            />
+
+            {/* Vignette overlay - darker edges */}
+            <div
+                className="fixed inset-0 z-[3] pointer-events-none"
+                style={{
+                    background: 'radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0,0,0,0.4) 100%)'
+                }}
+            />
+
+            {/* Top/Bottom gradient for depth */}
+            <div
+                className="fixed inset-0 z-[4] pointer-events-none"
+                style={{
+                    background: 'linear-gradient(to bottom, rgba(0,0,0,0.25) 0%, transparent 20%, transparent 80%, rgba(0,0,0,0.35) 100%)'
+                }}
+            />
+
+            {/* Animated particle overlay */}
+            <ParticleOverlay />
         </>
     )
 }

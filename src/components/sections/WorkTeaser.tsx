@@ -147,7 +147,7 @@ export default function WorkTeaser() {
                     transition={{ delay: 0.1, duration: 0.8 }}
                 >
                     <h2 className="font-serif text-4xl md:text-6xl lg:text-7xl text-white mb-6">
-                        Proof of Execution
+                        Proof of <span className="font-imperial text-5xl md:text-7xl lg:text-8xl text-accent-warm">Execution</span>
                     </h2>
                     <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto">
                         Selected work from our portfolio. Real results for real enterprises.
