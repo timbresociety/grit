@@ -19,8 +19,16 @@ export default function Navbar() {
             animate={showNavbar ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
             transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
         >
-            <div className="container-editorial flex items-center justify-between">
-                {/* Logo */}
+            {/* Invisible mask area - prevents content from appearing in this zone */}
+            <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                    background: 'linear-gradient(to bottom, rgba(10,10,10,1) 0%, rgba(10,10,10,0.8) 60%, transparent 100%)'
+                }}
+            />
+
+            <div className="container-editorial relative flex items-center justify-between">
+                {/* Logo Button - Floating */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
@@ -28,48 +36,32 @@ export default function Navbar() {
                 >
                     <Link
                         href="/"
-                        className="flex items-center gap-2 hover:opacity-70 transition-opacity bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity bg-neutral-900/70 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10"
                     >
                         <Image
                             src="/images/logo.png"
                             alt="GRIT Labs"
-                            width={24}
-                            height={24}
-                            className="brightness-0"
+                            width={22}
+                            height={22}
+                            className="brightness-0 invert"
                         />
-                        <span className="text-lg font-medium tracking-tight" style={{ fontFamily: 'var(--font-pp-mondwest)' }}>GRIT Labs</span>
+                        <span className="text-base font-medium tracking-tight text-white" style={{ fontFamily: 'var(--font-pp-mondwest)' }}>GRIT Labs</span>
                     </Link>
                 </motion.div>
 
-                {/* Desktop Navigation */}
-                <div className="hidden md:flex items-center gap-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                {/* Explore Work Button - Floating */}
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                >
+                    <Link
+                        href="/work"
+                        className="inline-flex items-center gap-1.5 text-sm text-white hover:opacity-80 transition-opacity bg-neutral-900/70 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10"
                     >
-                        <Link
-                            href="/work"
-                            className="text-sm text-neutral-800 hover:text-black transition-colors bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
-                        >
-                            Work
-                        </Link>
-                    </motion.div>
-                    <motion.div
-                        initial={{ opacity: 0, y: -20 }}
-                        animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-                        transition={{ duration: 0.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    >
-                        <a
-                            href="https://calendly.com/gritlabsinit"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-sm text-neutral-800 hover:text-black transition-colors bg-white/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/30"
-                        >
-                            Explore A Build Sprint <ArrowRight size={14} />
-                        </a>
-                    </motion.div>
-                </div>
+                        Explore Work <ArrowRight size={14} />
+                    </Link>
+                </motion.div>
             </div>
         </motion.nav>
     )

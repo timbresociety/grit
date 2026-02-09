@@ -1,13 +1,12 @@
 "use client"
 
-import { useRef, useEffect, useState } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import {
     Coins, Network, Link, Globe, CreditCard, Layers,
     Bot, BarChart, Mic, Eye, Database, ShieldCheck
 } from 'lucide-react'
 import LottieIcon from '@/components/ui/LottieIcon'
-import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
 
 // Blockchain capabilities
 const blockchainCapabilities = [
@@ -114,12 +113,12 @@ function BentoCard({ title, description, icon: Icon, lottieIcon, tags, index }: 
     return (
         <motion.div
             className="panel panel-hover p-6 flex flex-col h-full min-h-[220px] group"
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ y: 30, scale: 0.98 }}
+            whileInView={{ y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{
-                duration: 0.5,
-                delay: index * 0.08,
+                duration: 0.4,
+                delay: index * 0.05,
                 ease: [0.21, 0.47, 0.32, 0.98]
             }}
             whileHover={{
@@ -150,17 +149,13 @@ function BentoCard({ title, description, icon: Icon, lottieIcon, tags, index }: 
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1.5 mt-auto">
-                {tags.map((tag, i) => (
-                    <motion.span
+                {tags.map((tag) => (
+                    <span
                         key={tag}
                         className="text-[10px] px-2 py-1 bg-background border border-border rounded-full text-muted"
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: index * 0.08 + i * 0.05 + 0.3 }}
                     >
                         {tag}
-                    </motion.span>
+                    </span>
                 ))}
             </div>
         </motion.div>
@@ -212,25 +207,10 @@ export default function Services() {
     const headerRef = useRef<HTMLDivElement>(null)
     const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" })
 
-    // Strict visibility control
-    // Strict Sync: Use Global Scroll Progress
-    const { scrollYProgress: globalScroll } = useScroll()
-
-    // Normalized start/end points (0 to 1)
-    const startPoint = SECTION_FRAME_MAP.services.start / TOTAL_FRAMES
-    const endPoint = SECTION_FRAME_MAP.services.end / TOTAL_FRAMES
-
-    const sectionOpacity = useTransform(
-        globalScroll,
-        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
-        [0, 1, 1, 0]
-    )
-
     return (
-        <motion.section
+        <section
             ref={sectionRef}
             className="editorial-section"
-            style={{ opacity: sectionOpacity }}
         >
             <div className="container-editorial">
                 {/* Main Section Header */}
@@ -272,6 +252,6 @@ export default function Services() {
                     reverse
                 />
             </div>
-        </motion.section>
+        </section>
     )
 }

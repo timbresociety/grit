@@ -77,8 +77,8 @@
 
   @media (max-width: 768px) {
     html {
-      --frames-per-vh: 40;
-      /* Taller sections on mobile */
+      --frames-per-vh: 100;
+      /* Same as desktop - section-aware frame sync handles correct frame mapping */
     }
   }
 

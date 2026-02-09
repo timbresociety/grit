@@ -3,9 +3,9 @@
 import { useRef, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { ArrowRight, ExternalLink } from 'lucide-react'
-import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
+
 
 // Selected case studies from our portfolio
 const caseStudies = [
@@ -116,32 +116,18 @@ export default function WorkTeaser() {
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
 
-    // Strict Sync: Use Global Scroll Progress
-    const { scrollYProgress: globalScroll } = useScroll()
-
-    // Normalized start/end points (0 to 1)
-    const startPoint = SECTION_FRAME_MAP.work.start / TOTAL_FRAMES
-    const endPoint = SECTION_FRAME_MAP.work.end / TOTAL_FRAMES
-
-    const sectionOpacity = useTransform(
-        globalScroll,
-        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
-        [0, 1, 1, 0]
-    )
-
     return (
-        <motion.section
+        <section
             ref={sectionRef}
             className="editorial-section scroll-mt-32"
-            style={{ opacity: sectionOpacity }}
         >
 
             <div
                 ref={headerRef}
-                className="text-center pt-20 md:pt-32 pb-12 md:pb-16 flex justify-center"
+                className="text-center pt-20 md:pt-32 pb-12 md:pb-16 flex justify-center px-4"
             >
                 <motion.div
-                    className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
+                    className="glass-panel-dark px-6 py-6 md:px-12 md:py-8 inline-block max-w-full"
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.1, duration: 0.8 }}
@@ -179,6 +165,6 @@ export default function WorkTeaser() {
                 </motion.div>
             </div>
 
-        </motion.section>
+        </section>
     )
 }

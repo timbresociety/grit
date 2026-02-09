@@ -1,9 +1,9 @@
 "use client"
 
 import { useRef, useEffect, useState } from 'react'
-import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
+import { motion, useInView } from 'framer-motion'
 import { CheckCircle2, ArrowRight } from 'lucide-react'
-import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
+
 
 interface Phase {
     id: number
@@ -141,26 +141,12 @@ export default function Process() {
     const headerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
 
-    // Strict Sync: Use Global Scroll Progress
-    const { scrollYProgress: globalScroll } = useScroll()
-
-    // Normalized start/end points (0 to 1)
-    const startPoint = SECTION_FRAME_MAP.process.start / TOTAL_FRAMES
-    const endPoint = SECTION_FRAME_MAP.process.end / TOTAL_FRAMES
-
-    const sectionOpacity = useTransform(
-        globalScroll,
-        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
-        [0, 1, 1, 0]
-    )
-
     return (
-        <motion.section
+        <section
             id="process"
             ref={sectionRef}
             className="editorial-section relative"
             style={{
-                opacity: sectionOpacity,
                 // CSS Variables for Responsive Tuning
                 '--stack-offset': '120px', // Default (Desktop)
                 '--card-margin': '4rem',     // Default (Desktop)
@@ -232,6 +218,6 @@ export default function Process() {
                     </a>
                 </motion.div>
             </div>
-        </motion.section>
+        </section>
     )
 }

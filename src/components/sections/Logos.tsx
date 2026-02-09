@@ -1,8 +1,7 @@
 "use client"
 
 import { useRef } from 'react'
-import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
+import { motion, useInView } from 'framer-motion'
 import { useSectionInView } from '@/components/ui/EditorialLayout'
 
 interface Logo {
@@ -41,25 +40,13 @@ export default function Logos() {
     const containerRef = useRef<HTMLDivElement>(null)
     const isInView = useInView(containerRef, { once: true, margin: "-10% 0px" })
 
-    // Sync with global scroll
-    const { scrollYProgress: globalScroll } = useScroll()
-    const startPoint = SECTION_FRAME_MAP.operator.start / TOTAL_FRAMES
-    const endPoint = SECTION_FRAME_MAP.operator.end / TOTAL_FRAMES
-
-    const sectionOpacity = useTransform(
-        globalScroll,
-        [startPoint - 0.02, startPoint, endPoint, endPoint + 0.02],
-        [0, 1, 1, 0]
-    )
-
     // Create a dense enough array to ensure loop smoothness
     const displayLogos = [...logos, ...logos, ...logos, ...logos]
 
     return (
-        <motion.section
+        <section
             ref={sectionRef}
             className="editorial-section h-full flex items-center justify-center overflow-visible py-20 md:py-32"
-            style={{ opacity: sectionOpacity }}
         >
             <div className="w-full">
 
@@ -86,7 +73,7 @@ export default function Logos() {
                     </div>
                 </div>
             </div>
-        </motion.section>
+        </section>
     )
 }
 

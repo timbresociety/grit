@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from 'react'
 import { motion, useInView, useScroll, useTransform, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Mail, Calendar, MessageCircle } from 'lucide-react'
-import { SECTION_FRAME_MAP, TOTAL_FRAMES } from '@/components/ui/ScrollVideoBackground'
+
 
 const contactOptions = [
     {
@@ -44,19 +44,6 @@ export default function ContactCTA() {
     const isInView = useInView(headerRef, { once: true, margin: "-100px" })
     const prefersReducedMotion = useReducedMotion()
 
-    // Strict Sync: Use Global Scroll Progress
-    const { scrollYProgress: globalScroll } = useScroll()
-
-    // Normalized start point (0 to 1)
-    const startPoint = SECTION_FRAME_MAP.contact.start / TOTAL_FRAMES
-
-    // Fade in and stay visible
-    const sectionOpacity = useTransform(
-        globalScroll,
-        [startPoint - 0.02, startPoint],
-        [0, 1]
-    )
-
     const { scrollYProgress } = useScroll({
         target: scrollRef,
         offset: ["start end", "end end"]
@@ -65,14 +52,13 @@ export default function ContactCTA() {
     const backgroundOpacity = useTransform(scrollYProgress, [0, 0.5], [0, 0.06])
 
     return (
-        <motion.section
+        <section
             id="contact"
             ref={(el) => {
                 if (scrollRef) (scrollRef as React.MutableRefObject<HTMLElement | null>).current = el
                 if (viewRef) (viewRef as React.MutableRefObject<HTMLElement | null>).current = el
             }}
             className="editorial-section scroll-mt-32 relative overflow-hidden"
-            style={{ opacity: sectionOpacity }}
         >
             {/* Background Pattern */}
             <motion.div
@@ -96,10 +82,10 @@ export default function ContactCTA() {
                 {/* Section Header */}
                 <div
                     ref={headerRef}
-                    className="text-center"
+                    className="text-center px-4"
                 >
                     <motion.div
-                        className="glass-panel-dark px-8 py-6 md:px-12 md:py-8 inline-block"
+                        className="glass-panel-dark px-6 py-6 md:px-12 md:py-8 inline-block max-w-full"
                         initial={{ opacity: 0, y: 30 }}
                         animate={isInView ? { opacity: 1, y: 0 } : {}}
                         transition={{ delay: 0.1, duration: 0.8 }}
@@ -133,6 +119,6 @@ export default function ContactCTA() {
 
             </div>
 
-        </motion.section>
+        </section>
     )
 }
