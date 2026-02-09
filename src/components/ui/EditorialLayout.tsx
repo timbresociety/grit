@@ -4,6 +4,7 @@ import { ReactNode, createContext, useContext, useState, useCallback, useEffect 
 import { useInView } from 'framer-motion'
 import { useRef } from 'react'
 import ScrollVideoBackground from './ScrollVideoBackground'
+import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 
 // Section configuration
 const SECTIONS = [
@@ -61,6 +62,26 @@ interface EditorialLayoutProps {
 
 export default function EditorialLayout({ children }: EditorialLayoutProps) {
     const [activeSection, setActiveSection] = useState('hero')
+    const { isComplete } = useHeroLoading()
+
+    // Block scroll during loading
+    useEffect(() => {
+        if (!isComplete) {
+            // Prevent scrolling during load
+            document.body.style.overflow = 'hidden'
+            document.body.style.height = '100vh'
+        } else {
+            // Re-enable scrolling after load
+            document.body.style.overflow = ''
+            document.body.style.height = ''
+        }
+
+        return () => {
+            // Cleanup on unmount
+            document.body.style.overflow = ''
+            document.body.style.height = ''
+        }
+    }, [isComplete])
 
     return (
         <ActiveSectionContext.Provider value={{ activeSection, setActiveSection }}>

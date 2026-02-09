@@ -3,6 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { useReducedMotion } from 'framer-motion'
 import ParticleOverlay from './ParticleOverlay'
+import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 
 // Total number of frames in the video sequence
 export const TOTAL_FRAMES = 1032
@@ -49,6 +50,9 @@ interface ScrollVideoBackgroundProps {
     className?: string
 }
 
+// Batch size for parallel frame loading
+const BATCH_SIZE = 20
+
 export default function ScrollVideoBackground({ className }: ScrollVideoBackgroundProps) {
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const imagesRef = useRef<Map<number, HTMLImageElement>>(new Map())
@@ -56,6 +60,9 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
     const prefersReducedMotion = useReducedMotion()
     const rafRef = useRef<number | null>(null)
     const pendingFrameRef = useRef<number | null>(null)
+    const [allFramesLoaded, setAllFramesLoaded] = useState(false)
+
+    const { reportFrameLoaded, markLoadingComplete, isComplete, setTotalFrames } = useHeroLoading()
 
     // Draw image to COVER canvas (object-fit: cover) with slight scale-up for edge-to-edge fit
     const drawImageCover = useCallback((
@@ -94,8 +101,8 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight)
     }, [])
 
-    // Load a single frame
-    const loadFrame = useCallback((index: number): Promise<HTMLImageElement> => {
+    // Load a single frame (without reporting progress - used for individual loads)
+    const loadFrameSilent = useCallback((index: number): Promise<HTMLImageElement> => {
         return new Promise((resolve, reject) => {
             if (index < 1 || index > TOTAL_FRAMES) {
                 reject(new Error(`Invalid frame index: ${index}`))
@@ -117,18 +124,35 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
         })
     }, [])
 
-    // Preload frames around the current frame
-    const preloadAroundFrame = useCallback((centerFrame: number) => {
-        const PRELOAD_AHEAD = 40
-        const PRELOAD_BEHIND = 15
-
-        for (let offset = -PRELOAD_BEHIND; offset <= PRELOAD_AHEAD; offset++) {
-            const frameToLoad = centerFrame + offset
-            if (frameToLoad >= 1 && frameToLoad <= TOTAL_FRAMES && !imagesRef.current.has(frameToLoad)) {
-                loadFrame(frameToLoad).catch(() => { })
+    // Load a single frame with progress reporting
+    const loadFrameWithProgress = useCallback((index: number): Promise<HTMLImageElement> => {
+        return new Promise((resolve, reject) => {
+            if (index < 1 || index > TOTAL_FRAMES) {
+                reject(new Error(`Invalid frame index: ${index}`))
+                return
             }
-        }
-    }, [loadFrame])
+
+            if (imagesRef.current.has(index)) {
+                // Already loaded - still report progress
+                reportFrameLoaded()
+                resolve(imagesRef.current.get(index)!)
+                return
+            }
+
+            const img = new Image()
+            img.src = getFramePath(index)
+            img.onload = () => {
+                imagesRef.current.set(index, img)
+                reportFrameLoaded()
+                resolve(img)
+            }
+            img.onerror = () => {
+                // Still report progress even on error to prevent hanging
+                reportFrameLoaded()
+                reject(new Error(`Failed to load frame ${index}`))
+            }
+        })
+    }, [reportFrameLoaded])
 
     // Render a specific frame
     const renderFrame = useCallback((index: number) => {
@@ -155,17 +179,16 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
                     pendingFrameRef.current = null
                     rafRef.current = null
 
-                    preloadAroundFrame(frameToRender)
-
                     if (imagesRef.current.has(frameToRender)) {
                         renderFrame(frameToRender)
                     } else {
-                        loadFrame(frameToRender).then(() => renderFrame(frameToRender)).catch(() => { })
+                        // All frames should be preloaded, but fallback just in case
+                        loadFrameSilent(frameToRender).then(() => renderFrame(frameToRender)).catch(() => { })
                     }
                 }
             })
         }
-    }, [preloadAroundFrame, renderFrame, loadFrame])
+    }, [renderFrame, loadFrameSilent])
 
     // Calculate frame based on global scroll progress
     const getFrameForScroll = useCallback((): number => {
@@ -183,53 +206,91 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
         return Math.max(1, Math.min(TOTAL_FRAMES, frame))
     }, [])
 
-    // Handle scroll
+    // Handle scroll - only active after all frames are loaded
     const handleScroll = useCallback(() => {
+        if (!allFramesLoaded) return
+
         const frame = getFrameForScroll()
 
         if (frame !== currentFrameRef.current) {
             scheduleRender(frame)
         }
-    }, [getFrameForScroll, scheduleRender])
+    }, [getFrameForScroll, scheduleRender, allFramesLoaded])
 
-    // Initial frame loading
-    // Initial frame loading
+    // Preload ALL frames on mount
     useEffect(() => {
         // Reset scroll on hard refresh or initial load to prevent mismatch
-        // Using history.scrollRestoration to 'manual' if mostly video driven
         if (history.scrollRestoration) {
             history.scrollRestoration = 'manual'
         }
         window.scrollTo(0, 0)
 
-        const loadInitialFrames = async () => {
-            try {
-                const firstImg = await loadFrame(1)
+        // Set total frames for progress tracking
+        setTotalFrames(TOTAL_FRAMES)
 
-                if (canvasRef.current) {
-                    const ctx = canvasRef.current.getContext('2d')
-                    if (ctx) {
-                        drawImageCover(ctx, firstImg, window.innerWidth, window.innerHeight)
+        // Set up canvas dimensions FIRST before any drawing
+        const setupCanvas = () => {
+            if (!canvasRef.current) return null
+
+            const dpr = Math.min(window.devicePixelRatio || 1, 2)
+            const width = window.innerWidth
+            const height = window.innerHeight
+
+            canvasRef.current.width = width * dpr
+            canvasRef.current.height = height * dpr
+            canvasRef.current.style.width = `${width}px`
+            canvasRef.current.style.height = `${height}px`
+
+            const ctx = canvasRef.current.getContext('2d')
+            if (ctx) {
+                ctx.scale(dpr, dpr)
+            }
+            return ctx
+        }
+
+        const ctx = setupCanvas()
+
+        const loadAllFrames = async () => {
+            try {
+                // Phase 1: Load first frame immediately and display it
+                const firstImg = await loadFrameWithProgress(1)
+                if (canvasRef.current && ctx) {
+                    drawImageCover(ctx, firstImg, window.innerWidth, window.innerHeight)
+                }
+
+                // Phase 2: Load priority frames (section starts) first
+                const sectionStarts = Object.values(SECTION_FRAME_MAP).map(range => range.start)
+                const priorityFrames = sectionStarts.filter(f => f !== 1)
+                await Promise.all(priorityFrames.map(frame => loadFrameWithProgress(frame).catch(() => { })))
+
+                // Phase 3: Load remaining frames in parallel batches
+                const remainingFrames: number[] = []
+                const sectionStartSet = new Set<number>(sectionStarts as number[])
+                for (let i = 2; i <= TOTAL_FRAMES; i++) {
+                    if (!sectionStartSet.has(i) && !imagesRef.current.has(i)) {
+                        remainingFrames.push(i)
                     }
                 }
 
-                // Preload section start frames - prioritized
-                const sectionStarts = Object.values(SECTION_FRAME_MAP).map(range => range.start)
-                for (const frame of sectionStarts) {
-                    loadFrame(frame).catch(() => { })
+                // Load in batches to avoid overwhelming the browser
+                for (let i = 0; i < remainingFrames.length; i += BATCH_SIZE) {
+                    const batch = remainingFrames.slice(i, i + BATCH_SIZE)
+                    await Promise.all(batch.map(frame => loadFrameWithProgress(frame).catch(() => { })))
                 }
 
-                // Preload first 50 frames for immediate hero interaction
-                for (let i = 2; i <= 50; i++) {
-                    loadFrame(i).catch(() => { })
-                }
+                // All frames loaded!
+                setAllFramesLoaded(true)
+                markLoadingComplete()
             } catch (err) {
-                console.error('Failed to load initial frame:', err)
+                console.error('Failed to preload frames:', err)
+                // Mark complete anyway to unblock the page
+                setAllFramesLoaded(true)
+                markLoadingComplete()
             }
         }
 
-        loadInitialFrames()
-    }, [loadFrame, drawImageCover])
+        loadAllFrames()
+    }, [loadFrameWithProgress, drawImageCover, markLoadingComplete, setTotalFrames])
 
     // Handle canvas resize
     useEffect(() => {
@@ -256,17 +317,20 @@ export default function ScrollVideoBackground({ className }: ScrollVideoBackgrou
             }
         }
 
-        handleResize()
+        // Don't call handleResize() on mount - initial setup is done in the initial load effect
+        // Only listen for actual window resize events
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
     }, [drawImageCover])
 
-    // Setup scroll listener
+    // Setup scroll listener - only after loading is complete
     useEffect(() => {
+        if (!isComplete || !allFramesLoaded) return
+
         handleScroll() // Initial frame
         window.addEventListener('scroll', handleScroll, { passive: true })
         return () => window.removeEventListener('scroll', handleScroll)
-    }, [handleScroll])
+    }, [handleScroll, isComplete, allFramesLoaded])
 
     // Cleanup RAF on unmount
     useEffect(() => {

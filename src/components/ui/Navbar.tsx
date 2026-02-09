@@ -49,19 +49,37 @@ export default function Navbar() {
                     </Link>
                 </motion.div>
 
-                {/* Explore Work Button - Floating */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-                    transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-                >
-                    <Link
-                        href="/work"
-                        className="inline-flex items-center gap-1.5 text-sm text-white hover:opacity-80 transition-opacity bg-neutral-900/70 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10"
+                {/* Navigation buttons container */}
+                <div className="flex items-center gap-3">
+                    {/* Explore Work Button - Hidden on mobile */}
+                    <motion.div
+                        className="hidden md:block"
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
                     >
-                        Explore Work <ArrowRight size={14} />
-                    </Link>
-                </motion.div>
+                        <Link
+                            href="/work"
+                            className="inline-flex items-center gap-1.5 text-sm text-white hover:opacity-80 transition-opacity bg-neutral-900/70 backdrop-blur-md px-4 py-2.5 rounded-full border border-white/10"
+                        >
+                            Explore Work <ArrowRight size={14} />
+                        </Link>
+                    </motion.div>
+
+                    {/* Start Your Sprint Button - Always visible */}
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={showNavbar ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+                        transition={{ duration: 0.5, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                        <Link
+                            href="#contact"
+                            className="inline-flex items-center gap-1.5 text-sm font-medium text-black hover:opacity-90 transition-opacity bg-white px-4 py-2.5 rounded-full"
+                        >
+                            Start Your Sprint <ArrowRight size={14} />
+                        </Link>
+                    </motion.div>
+                </div>
             </div>
         </motion.nav>
     )

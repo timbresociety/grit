@@ -5,10 +5,13 @@ import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 import Image from 'next/image'
 
 export default function PageLoader() {
-    const { phase, progress, isComplete } = useHeroLoading()
+    const { phase, progress, isComplete, framesLoaded, totalFrames } = useHeroLoading()
 
-    // Loader is visible during phases 0, 1, and 2
-    const isVisible = phase <= 2
+    // Loader is visible during loading phase (0)
+    const isVisible = phase === 0
+
+    // Calculate percentage
+    const percentage = Math.round(progress * 100)
 
     return (
         <AnimatePresence>
@@ -70,15 +73,25 @@ export default function PageLoader() {
                         </motion.div>
 
                         {/* Loading progress bar */}
-                        <div className="w-32 h-[2px] bg-white/10 rounded-full overflow-hidden">
+                        <div className="w-48 h-[2px] bg-white/10 rounded-full overflow-hidden">
                             <motion.div
                                 className="h-full bg-white/80 rounded-full"
                                 style={{
-                                    width: `${((phase / 3) + (progress / 3)) * 100}%`
+                                    width: `${percentage}%`
                                 }}
                                 transition={{ duration: 0.1 }}
                             />
                         </div>
+
+                        {/* Loading percentage */}
+                        <motion.p
+                            className="text-white/60 text-sm font-mono tracking-wider"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                        >
+                            {percentage}%
+                        </motion.p>
 
                         {/* Subtle tagline */}
                         <motion.p
@@ -87,7 +100,7 @@ export default function PageLoader() {
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.5 }}
                         >
-                            Engineered to Endure
+                            Loading Experience
                         </motion.p>
                     </motion.div>
                 </motion.div>

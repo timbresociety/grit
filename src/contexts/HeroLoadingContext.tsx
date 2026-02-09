@@ -3,24 +3,33 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 
 // Loading phases:
-// 0: Initial black screen
-// 1: Cyber background reveals pixel-by-pixel
-// 2: Renaissance image overlays pixel-by-pixel
-// 3: UI elements (panels, navbar) fade in
-// 4: Complete (normal interaction mode)
+// 0: Initial - loading screen visible, assets loading
+// 1: Assets loaded - transition animation
+// 2: UI reveal - panels and navbar fade in
+// 3: Complete - normal interaction mode
 
-export type LoadingPhase = 0 | 1 | 2 | 3 | 4
+export type LoadingPhase = 0 | 1 | 2 | 3
 
 interface HeroLoadingContextValue {
     phase: LoadingPhase
-    progress: number // 0-1 progress within current phase
+    progress: number // 0-1 progress of frame loading
     isComplete: boolean
+    framesLoaded: number
+    totalFrames: number
+    reportFrameLoaded: () => void
+    setTotalFrames: (total: number) => void
+    markLoadingComplete: () => void
 }
 
 const HeroLoadingContext = createContext<HeroLoadingContextValue>({
     phase: 0,
     progress: 0,
     isComplete: false,
+    framesLoaded: 0,
+    totalFrames: 1032,
+    reportFrameLoaded: () => { },
+    setTotalFrames: () => { },
+    markLoadingComplete: () => { },
 })
 
 export function useHeroLoading() {
@@ -31,58 +40,63 @@ interface HeroLoadingProviderProps {
     children: ReactNode
 }
 
-// Phase durations in ms
-const PHASE_DURATIONS = {
-    0: 300,   // Brief black screen
-    1: 1000,  // Cyber reveal (edge to center)
-    2: 1000,  // Renaissance overlay (center to edge)
-    3: 800,   // UI fade in
+// Transition durations after assets are loaded
+const TRANSITION_DURATIONS = {
+    1: 800,   // Transition animation after load
+    2: 600,   // UI fade in
 }
 
 export function HeroLoadingProvider({ children }: HeroLoadingProviderProps) {
     const [phase, setPhase] = useState<LoadingPhase>(0)
-    const [progress, setProgress] = useState(0)
-    const [startTime, setStartTime] = useState<number | null>(null)
+    const [framesLoaded, setFramesLoaded] = useState(0)
+    const [totalFrames, setTotalFrames] = useState(1032)
+    const [assetsReady, setAssetsReady] = useState(false)
 
-    const isComplete = phase === 4
+    const progress = totalFrames > 0 ? framesLoaded / totalFrames : 0
+    const isComplete = phase === 3
 
+    // Called by ScrollVideoBackground when a frame is loaded
+    const reportFrameLoaded = useCallback(() => {
+        setFramesLoaded(prev => prev + 1)
+    }, [])
+
+    // Called when all frames are loaded
+    const markLoadingComplete = useCallback(() => {
+        setAssetsReady(true)
+    }, [])
+
+    // Transition through phases after assets are ready
     useEffect(() => {
-        if (phase >= 4) return
+        if (!assetsReady) return
+        if (phase >= 3) return
 
-        const phaseDuration = PHASE_DURATIONS[phase as keyof typeof PHASE_DURATIONS] || 1000
-
-        if (startTime === null) {
-            setStartTime(performance.now())
+        // Move to next phase immediately when assets ready
+        if (phase === 0) {
+            setPhase(1)
+            return
         }
 
-        let animationId: number
+        const duration = TRANSITION_DURATIONS[phase as keyof typeof TRANSITION_DURATIONS] || 500
 
-        const animate = (currentTime: number) => {
-            const elapsed = currentTime - (startTime ?? currentTime)
-            const phaseProgress = Math.min(elapsed / phaseDuration, 1)
+        const timer = setTimeout(() => {
+            const nextPhase = (phase + 1) as LoadingPhase
+            setPhase(nextPhase)
+        }, duration)
 
-            setProgress(phaseProgress)
-
-            if (phaseProgress >= 1) {
-                // Move to next phase
-                const nextPhase = (phase + 1) as LoadingPhase
-                setPhase(nextPhase)
-                setStartTime(null)
-                setProgress(0)
-            } else {
-                animationId = requestAnimationFrame(animate)
-            }
-        }
-
-        animationId = requestAnimationFrame(animate)
-
-        return () => {
-            if (animationId) cancelAnimationFrame(animationId)
-        }
-    }, [phase, startTime])
+        return () => clearTimeout(timer)
+    }, [assetsReady, phase])
 
     return (
-        <HeroLoadingContext.Provider value={{ phase, progress, isComplete }}>
+        <HeroLoadingContext.Provider value={{
+            phase,
+            progress,
+            isComplete,
+            framesLoaded,
+            totalFrames,
+            reportFrameLoaded,
+            setTotalFrames,
+            markLoadingComplete,
+        }}>
             {children}
         </HeroLoadingContext.Provider>
     )
