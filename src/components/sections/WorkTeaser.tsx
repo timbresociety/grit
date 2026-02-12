@@ -158,7 +158,7 @@ export default function WorkTeaser() {
                 >
                     <Link
                         href="/work"
-                        className="btn-secondary inline-flex"
+                        className="btn-primary inline-flex"
                     >
                         View All Case Studies <ArrowRight size={16} />
                     </Link>

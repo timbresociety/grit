@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from 'react'
+import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 
 interface Particle {
     x: number
@@ -19,8 +20,12 @@ export default function ParticleOverlay() {
     const mouseRef = useRef({ x: -1000, y: -1000 })
     const animationRef = useRef<number | null>(null)
     const isInitializedRef = useRef(false)
+    const { isComplete } = useHeroLoading()
 
     useEffect(() => {
+        // Defer particle initialization until loading is complete
+        if (!isComplete) return
+
         const canvas = canvasRef.current
         if (!canvas) return
 
@@ -196,7 +201,7 @@ export default function ParticleOverlay() {
                 cancelAnimationFrame(animationRef.current)
             }
         }
-    }, [])
+    }, [isComplete]) // Only start when loading is complete
 
     return (
         <canvas

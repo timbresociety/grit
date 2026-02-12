@@ -10,28 +10,28 @@ interface Logo {
     className?: string
 }
 
+// Per-logo sizing — tuned so all logos appear visually equal.
+// Amazon is naturally wide, so it's the baseline. Others are scaled up to match.
 const logos: Logo[] = [
     {
         name: "Amazon",
         src: "/partners/amazon_new.png",
-        className: "h-10 md:h-14 w-auto brightness-0 invert"
+        className: "h-10 md:h-14",  // Baseline reference
     },
     {
         name: "CRED",
         src: "/partners/cred_new.png",
-        className: "h-11 md:h-16 w-auto brightness-0 invert"
+        className: "h-14 md:h-20",  // Taller PNG ratio + padding — scale up to match Amazon
     },
     {
         name: "Jio",
         src: "/partners/jio_final.png",
-        // Increased height significantly to match visual weight of rectangular logos
-        className: "h-14 md:h-20 w-auto invert hover:opacity-100 transition-opacity duration-300"
+        className: "h-16 md:h-24",  // Square PNG with circular logo — needs more height
     },
     {
         name: "Coinshift",
         src: "/partners/coinshift_new.png",
-        // Increased height for scaling
-        className: "h-13 md:h-18 w-auto brightness-0 invert scale-110"
+        className: "h-14 md:h-20",  // Internal padding compensation
     },
 ]
 
@@ -79,7 +79,7 @@ export default function Logos() {
 
 const MarqueeTrack = ({ logos }: { logos: Logo[] }) => (
     <motion.div
-        className="flex items-center gap-12 md:gap-24 px-6 md:px-12 flex-shrink-0"
+        className="flex items-center gap-8 md:gap-16 px-4 md:px-8 flex-shrink-0"
         animate={{ x: ["0%", "-100%"] }}
         transition={{
             repeat: Infinity,
@@ -90,13 +90,20 @@ const MarqueeTrack = ({ logos }: { logos: Logo[] }) => (
         {logos.map((logo, idx) => (
             <div
                 key={`${logo.name}-${idx}`}
-                className="relative flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity duration-300"
+                className="relative flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity duration-300"
             >
                 <img
                     src={logo.src}
                     alt={logo.name}
-                    // Use the specific className from the logo config
-                    className={`object-contain ${logo.className}`}
+                    className={`object-contain ${logo.className || 'h-10 md:h-14'} w-auto`}
+                    style={{
+                        filter: `
+                            brightness(0) invert(1)
+                            drop-shadow(0 0 4px rgba(0,0,0,0.35))
+                            drop-shadow(0 0 8px rgba(0,0,0,0.2))
+                            drop-shadow(0 0 16px rgba(0,0,0,0.1))
+                        `.trim(),
+                    }}
                     loading="lazy"
                 />
             </div>

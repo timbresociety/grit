@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react'
 
 // Loading phases:
-// 0: Initial - loading screen visible, assets loading
+// 0: Initial - loading screen visible, hero keyframes loading
 // 1: Assets loaded - transition animation
 // 2: UI reveal - panels and navbar fade in
 // 3: Complete - normal interaction mode
@@ -12,7 +12,7 @@ export type LoadingPhase = 0 | 1 | 2 | 3
 
 interface HeroLoadingContextValue {
     phase: LoadingPhase
-    progress: number // 0-1 progress of frame loading
+    progress: number // 0-1 progress of initial frame loading
     isComplete: boolean
     framesLoaded: number
     totalFrames: number
@@ -26,7 +26,7 @@ const HeroLoadingContext = createContext<HeroLoadingContextValue>({
     progress: 0,
     isComplete: false,
     framesLoaded: 0,
-    totalFrames: 1032,
+    totalFrames: 1, // Will be set dynamically based on Phase 1 count
     reportFrameLoaded: () => { },
     setTotalFrames: () => { },
     markLoadingComplete: () => { },
@@ -49,10 +49,10 @@ const TRANSITION_DURATIONS = {
 export function HeroLoadingProvider({ children }: HeroLoadingProviderProps) {
     const [phase, setPhase] = useState<LoadingPhase>(0)
     const [framesLoaded, setFramesLoaded] = useState(0)
-    const [totalFrames, setTotalFrames] = useState(1032)
+    const [totalFrames, setTotalFrames] = useState(1) // Set dynamically by ScrollVideoBackground
     const [assetsReady, setAssetsReady] = useState(false)
 
-    const progress = totalFrames > 0 ? framesLoaded / totalFrames : 0
+    const progress = totalFrames > 0 ? Math.min(framesLoaded / totalFrames, 1) : 0
     const isComplete = phase === 3
 
     // Called by ScrollVideoBackground when a frame is loaded
@@ -60,7 +60,7 @@ export function HeroLoadingProvider({ children }: HeroLoadingProviderProps) {
         setFramesLoaded(prev => prev + 1)
     }, [])
 
-    // Called when all frames are loaded
+    // Called when Phase 1 (hero keyframes) are loaded
     const markLoadingComplete = useCallback(() => {
         setAssetsReady(true)
     }, [])

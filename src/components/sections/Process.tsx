@@ -212,7 +212,7 @@ export default function Process() {
                         href="https://calendly.com/gritlabsinit"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="btn-secondary inline-flex text-lg px-8 py-4"
+                        className="btn-primary inline-flex text-lg px-8 py-4"
                     >
                         Explore A Build Sprint <ArrowRight size={20} className="ml-2" />
                     </a>

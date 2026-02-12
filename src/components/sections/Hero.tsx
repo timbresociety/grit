@@ -136,9 +136,10 @@ export default function Hero() {
                                     href="https://calendly.com/gritlabsinit"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="btn-primary"
+                                    className="btn-secondary"
+                                    style={{ background: 'rgba(255,255,255,0.16)', borderColor: 'rgba(255,255,255,0.3)' }}
                                 >
-                                    Explore A Build Sprint <ArrowRight size={16} />
+                                    Start Your Build Sprint <ArrowRight size={16} />
                                 </a>
                                 <a
                                     href="#services"

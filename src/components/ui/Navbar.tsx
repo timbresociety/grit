@@ -74,7 +74,7 @@ export default function Navbar() {
                     >
                         <Link
                             href="#contact"
-                            className="inline-flex items-center gap-1.5 text-sm font-medium text-black hover:opacity-90 transition-opacity bg-white px-4 py-2.5 rounded-full"
+                            className="inline-flex items-center gap-1.5 text-sm font-medium text-white hover:opacity-90 transition-all bg-black/70 backdrop-blur-xl px-4 py-2.5 rounded-full border border-white/10 hover:border-white/20"
                         >
                             Start Your Sprint <ArrowRight size={14} />
                         </Link>
