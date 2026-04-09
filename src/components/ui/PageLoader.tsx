@@ -5,9 +5,9 @@ import { useHeroLoading } from '@/contexts/HeroLoadingContext'
 import Image from 'next/image'
 
 export default function PageLoader() {
-    const { phase, progress, isComplete, framesLoaded, totalFrames } = useHeroLoading()
+    const { phase, progress } = useHeroLoading()
 
-    // Loader is visible during loading phase (0)
+    // The loader only appears if the app ever re-enters phase 0.
     const isVisible = phase === 0
 
     // Calculate percentage

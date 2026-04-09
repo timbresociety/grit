@@ -47,10 +47,10 @@ const TRANSITION_DURATIONS = {
 }
 
 export function HeroLoadingProvider({ children }: HeroLoadingProviderProps) {
-    const [phase, setPhase] = useState<LoadingPhase>(0)
+    const [phase, setPhase] = useState<LoadingPhase>(3)
     const [framesLoaded, setFramesLoaded] = useState(0)
     const [totalFrames, setTotalFrames] = useState(1) // Set dynamically by ScrollVideoBackground
-    const [assetsReady, setAssetsReady] = useState(false)
+    const [assetsReady, setAssetsReady] = useState(true)
 
     const progress = totalFrames > 0 ? Math.min(framesLoaded / totalFrames, 1) : 0
     const isComplete = phase === 3
@@ -70,13 +70,9 @@ export function HeroLoadingProvider({ children }: HeroLoadingProviderProps) {
         if (!assetsReady) return
         if (phase >= 3) return
 
-        // Move to next phase immediately when assets ready
-        if (phase === 0) {
-            setPhase(1)
-            return
-        }
-
-        const duration = TRANSITION_DURATIONS[phase as keyof typeof TRANSITION_DURATIONS] || 500
+        const duration = phase === 0
+            ? 0
+            : TRANSITION_DURATIONS[phase as keyof typeof TRANSITION_DURATIONS] || 500
 
         const timer = setTimeout(() => {
             const nextPhase = (phase + 1) as LoadingPhase
